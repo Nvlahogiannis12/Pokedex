@@ -1,0 +1,26 @@
+body{
+    height:100%;
+    width:100%;
+    text-align: center;
+}
+.testBound{
+    border:solid red 2px;
+}
+
+#sprite{
+--light: rgba(60, 168, 255);
+--dark: rgba(7, 98, 228);
+  background: linear-gradient(
+    33.6deg,var(--light) 0% 9%,
+    -33.6deg,var(--dark) 11% 19%,
+   33.6deg,var(--light) 21% 29%,
+    -33.6deg,var(--dark) 31% 39%,
+   33.6deg, var(--light) 41% 49%,
+    -33.6deg,var(--dark) 51% 59%,
+   33.6deg,var(--light) 61% 69%,
+    -33.6deg,var(--dark) 71% 79%,
+   33.6deg,var(--light) 81% 89%,
+    -33.6deg,var(--dark) 91% 100%
+  );
+  background-repeat: repeat;
+}

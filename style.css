@@ -40,7 +40,7 @@ height:100%
     animation-iteration-count: infinite;
 }
 .spriteTitle{
-  font-size:75px;
+  font-size:65px;
   color:transparent;
   background:linear-gradient(rgba(207, 71, 31),rgba(255, 225, 59));
   background-clip:text;
@@ -61,10 +61,8 @@ height:100%
 
 #griding {
   margin:auto;
-  width: 250px;
-  height: auto;
+  width:72%;
 }
-
 .grid-cell {
   background-color: #e0e0e0;
   border: 1px solid #999;

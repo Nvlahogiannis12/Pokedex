@@ -1,4 +1,5 @@
-mapGrid(20, 20);
+mapGrid(16, 12);
+
 function mapGrid(height, width) {
 
     const container = document.getElementById("griding");

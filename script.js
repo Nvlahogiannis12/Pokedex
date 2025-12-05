@@ -1,4 +1,4 @@
-mapGrid(16, 12);
+mapGrid(14, 11);
 
 function mapGrid(height, width) {
 

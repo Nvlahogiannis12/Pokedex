@@ -1,17 +1,16 @@
-let finalCountDex;
-
 //Fetches the Region Name for each thing in Regions.JSON in order to Create Buttons
 fetch('regions.json')
   .then(response => response.json())
   .then(data => {
     const container = document.getElementById('list');
 
-    data.forEach(item => {
+    data.forEach((item, index) => {
       const button = document.createElement('button');
       button.textContent = item.name;
 
       button.addEventListener('click', () => {
         calcCells(item.numbers)
+        alert(index)
       });
 
       container.appendChild(button);
@@ -19,10 +18,9 @@ fetch('regions.json')
   })
   .catch(error => console.error('Error loading JSON:', error));
 
-
+//Generates the New Height of the grid based on how many pokemon in the Region
 function calcCells(regionI){
 let newH = Math.ceil(regionI / 10)
-alert(newH)
 mapGrid(newH, 12);
 }
 

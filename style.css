@@ -44,7 +44,7 @@ height:100%
   color:transparent;
   background:linear-gradient(rgba(207, 71, 31),rgba(255, 225, 59));
   background-clip:text;
-  filter:drop-shadow(1px 1px 10px black);
+  filter:drop-shadow(1px 1px 3px black);
   /*font-family: "Dex";*/
   font-family: "Saira", sans-serif;
   font-weight: 700;

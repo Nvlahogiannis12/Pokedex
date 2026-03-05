@@ -1,0 +1,19 @@
+UNRELEASED
+__________________________________________________________________________
+- Shiny Dex
+- Pokemon Cries added
+- Region Maps
+- Where to find every pokemon
+- Evolutions and Requirements for Evolution
+- Scroll through Dex
+- More info on each pokemon
+
+BETA Release
+__________________________________________________________________________
+v1.1 (3/5/2026)
+- Changelog Txt file added
+- Pokemon from Region selected are now the ONLY pokemon that appear when button is clicked
+
+v1.0 (3/5/2026)
+- Added Base Dex (Kanto To Paldea)
+- Region Select

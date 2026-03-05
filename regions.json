@@ -1,0 +1,52 @@
+[
+    {
+    "name":"Kanto",
+    "image":"",
+    "numbers":"151"
+},
+{
+    "name":"Johto",
+    "image":"",
+    "numbers":"100"
+},
+{
+    "name":"Hoenn",
+    "image":"",
+    "numbers":"135"
+},
+{
+    "name":"Sinnoh",
+    "image":"",
+    "numbers":"107"
+},
+{
+    "name":"Unova",
+    "image":"",
+    "numbers":"156"
+},
+{
+    "name":"Kalos",
+    "image":"",
+    "numbers":"72"
+},
+{
+    "name":"Alola",
+    "image":"",
+    "numbers":"88"
+},
+{
+    "name":"Galar",
+    "image":"",
+    "numbers":"89"
+},
+{
+    "name":"Hisui",
+    "image":"",
+    "numbers":"7"
+},
+{
+    "name":"Paldea",
+    "image":"",
+    "numbers":"120"
+}
+]

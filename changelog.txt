@@ -1,19 +1,26 @@
-UNRELEASED
-__________________________________________________________________________
+Unreleased Versions
+___________________________________________________________________________________________________________
 - Shiny Dex
-- Pokemon Cries added
+- Scroll through Dex
 - Region Maps
 - Where to find every pokemon
 - Evolutions and Requirements for Evolution
-- Scroll through Dex
 - More info on each pokemon
-
 BETA Release
-__________________________________________________________________________
-v1.1 (3/5/2026)
-- Changelog Txt file added
-- Pokemon from Region selected are now the ONLY pokemon that appear when button is clicked
+___________________________________________________________________________________________________________
+v1.2
+- Changed Folder Replacement location
+- Removed Beta 1.0 Reversion Availability
+- Changed Changelog Format
+- Removed grey box around Pokemon
+- Changed the Pokemon from Background Images to Images in the tiles
+- Fixed Styling Issues
+- Added Pokemon Cries
 
-v1.0 (3/5/2026)
+v1.1 (2026-03-05)
+- Added Changelog Txt file
+- Fixed Pokemon from Region selected are now the ONLY pokemon that appear when button is clicked
+
+v1.0 (2026-03-05)
 - Added Base Dex (Kanto To Paldea)
 - Region Select

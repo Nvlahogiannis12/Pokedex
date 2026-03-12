@@ -6,9 +6,17 @@ ________________________________________________________________________________
 - Where to find every pokemon
 - Evolutions and Requirements for Evolution
 - More info on each pokemon
+- Fixed Bug where some pokemon cries don't play
+- Added talking Pokedex
+
 BETA Release
 ___________________________________________________________________________________________________________
-v1.2
+v1.3
+- Added Favicon
+- Added Tabs for each Region in a nav-Bar
+- Changed Size of Pokedex boxes
+
+v1.2 (2026-03-09)
 - Changed Folder Replacement location
 - Removed Beta 1.0 Reversion Availability
 - Changed Changelog Format

@@ -44,8 +44,8 @@ fetch("regions.json")
 
 //Generates the New Height of the grid based on how many pokemon in the Region
 function calcCells(regionI, startNumber) {
- let newH = Math.ceil(regionI / 12);
- mapGrid(newH, 12, startNumber);
+ let newH = Math.ceil(regionI / 9);
+ mapGrid(newH, 9, startNumber);
 }
 
 
@@ -96,7 +96,7 @@ tile.addEventListener("click", async () => {
      
      // Create the image element
      let img = document.createElement("img");
-     img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${cellIndex}.png`;
+     img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${cellIndex}.png`;
      img.alt = `Pokemon ${cellIndex}`;
 
      // Make sure the image fits inside the tile
@@ -130,3 +130,43 @@ function filterRegionTiles(start, end) {
    }
  });
 }
+
+
+
+// Grab elements
+const menuIcon = document.getElementById("menuIcon");
+const sidebar = document.getElementById("sidebar");
+const links = document.querySelectorAll(".sidebar a");
+let isSidebarOpen = false;
+let productsInCart = [];
+let cartList = [];
+
+// Event listener to handle clicking the menu icon
+menuIcon.addEventListener("click", () => {
+  // Toggle the 'open' class for all screen sizes
+  sidebar.classList.toggle("open");
+  isSidebarOpen = !isSidebarOpen;
+});
+
+// Function to close the sidebar and navigate to a page
+function selectPage(event) {
+  event.preventDefault(); // Prevent the default link navigation to ensure the sidebar closes first
+  const targetUrl = event.target.getAttribute("href"); // Get the target URL from the clicked link
+
+  // Close the sidebar with a smooth transition
+  if (window.innerWidth <= 768) {
+    sidebar.classList.remove("open"); // Close the sidebar on mobile
+  } else {
+    sidebar.style.left = "-200px"; // Close the sidebar on desktop
+  }
+
+  // Wait for the transition to complete before navigating
+  setTimeout(() => {
+    window.location.href = targetUrl; // Navigate to the new page after the sidebar closes
+  }, 500); // Delay matches the CSS transition time (0.5s)
+}
+
+// Add event listeners to all sidebar links
+links.forEach((link) => {
+  link.addEventListener("click", selectPage);
+});

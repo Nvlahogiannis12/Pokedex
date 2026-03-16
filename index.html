@@ -21,7 +21,8 @@
 <body class="container-fluid">
     <header class="navbar-header">
         <!-- Menu icon at the top left -->
-        <div class="menu-icon" id="menuIcon">☰</div>
+         <div><img class="settingIcon" src="imgs/icons8-settings-144-removebg-preview.png" onclick="menuToggleFilt()"></div>
+        <div id="menuIcon"><img class="settingIcon" src="imgs/Pokedex_Icon.png"></div>
     </header>
     <!-- Sidebar with links -->
     <nav class="sidebar" id="sidebar">
@@ -29,11 +30,30 @@
             <h1>Regions</h1>
         </div>
     </nav>
+    <div id="pageOverlay" class="page-overlay hidden"></div>
     <main class="row">
         <div class="container">
             <div class="col-12" id="sprite">
                 <h1 class="spriteTitle my-2">Pokédex</h1>
+                <div id="instructions">
+                    <button id="openPokedexButton">Open Pokédex</button>
+                    <p class="instructFadeIn">Press the Pokédex button or settings in the corner to navigate to navigate</p>
+                </div>
                 <div id="griding"></div>
+            </div>
+            <div id="filterSettings" class="d-none">
+                <h1 class="filterTitle my-2">Filter Settings</h1>
+                <h3>Show Shiny</h3>
+                <label class="switch">
+                    <input type="checkbox" id="shinyToggle" onclick="toggleFilter('Shiny')">
+                    <span class="slider round"></span>
+                </label>
+                <h3>Enhanced Models</h3>
+                <label class="switch">
+                    <input type="checkbox" id="enhancedToggle" onclick="toggleFilter('Enhanced')">
+                    <span class="slider round"></span>
+                </label>
+                <button class="closeSettingsButton" onclick="menuToggleFilt()"><h3>Close Settings</h3></button>
             </div>
     </main>
     <footer>

@@ -1,6 +1,5 @@
 Unreleased Versions
 ___________________________________________________________________________________________________________
-- Shiny Dex
 - Scroll through Dex
 - Region Maps
 - Where to find every pokemon
@@ -8,6 +7,17 @@ ________________________________________________________________________________
 - More info on each pokemon
 - Fixed Bug where some pokemon cries don't play
 - Added talking Pokedex
+
+
+Official Release
+___________________________________________________________________________________________________________
+V1.0 (Shining Sounds Update)
+- Added Shiny Dex
+- Changed Some Styling
+- Added Enhanced Models back as a setting
+- Added Shiny Noise (Plays based on old or new models)
+- Changed Small Styling Issues
+
 
 BETA Release
 ___________________________________________________________________________________________________________

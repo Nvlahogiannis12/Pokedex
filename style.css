@@ -97,9 +97,11 @@ main {
   0% {
     filter: drop-shadow(1px 1px 3px black);
   }
+
   50% {
     filter: drop-shadow(1px 1px 3px black) brightness(1.2);
   }
+
   100% {
     filter: drop-shadow(1px 1px 3px black);
   }
@@ -108,6 +110,25 @@ main {
 #griding {
   margin: auto;
   width: 70%;
+}
+
+.instructFadeIn {
+  animation: bob 3.5s ease-in-out infinite;
+  display: block;
+  margin-top: 8px;
+  color: rgb(80, 80, 80);
+}
+
+@keyframes bob {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-3px);
+  }
 }
 
 .grid-cell {
@@ -183,6 +204,26 @@ main {
   /* Sidebar slides in */
 }
 
+.page-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 998;
+  background: rgba(0, 0, 0, 0.40);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.page-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.page-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .sidebar ul {
   list-style: none;
   padding: 20px 0;
@@ -211,4 +252,150 @@ main {
   margin: 0;
   padding: 0;
   font-size: 24px;
+}
+
+#filterSettings {
+  background-color: rgb(60, 90, 90);
+  position: fixed;
+  height: 450px;
+  aspect-ratio: 3/4;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin-top: 20px;
+  border: solid 1px;
+  border-radius: 10px;
+  border-color: white;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  gap: 16px;
+}
+
+.closeSettingsButton {
+  margin-top: auto;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #ff6b6b, #ff9f43);
+  color: #fff;
+  font-weight: 700;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+.closeSettingsButton:hover {
+  filter: brightness(1.1);
+}
+
+/* SLIDER */
+.switch {
+  position: relative;
+  display: block;
+  margin: 0 auto;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked+.slider {
+  background-color: #2196F3;
+}
+
+input:focus+.slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked+.slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.settingIcon {
+  width: 36px;
+  margin-left:10px;
+}
+.settingIcon:hover {
+  filter: brightness(1.1);
+  cursor: pointer;
+  background-color: #555;
+}
+
+.closeSettingsButton {
+  font-family: "Saira", sans-serif;
+  font-weight: 700;
+  background: linear-gradient(rgba(207, 71, 31), rgba(255, 225, 59));
+  color: whitesmoke;
+  filter: drop-shadow(1px 1px 2px black);
+  border: none;
+  border-radius: 5px;
+  font-size: 20px;
+  padding: 10px 15px;
+}
+
+#openPokedexButton,
+.closeSettingsButton {
+  font-family: "Saira", sans-serif;
+  font-weight: 700;
+  background: linear-gradient(rgba(207, 71, 31), rgba(255, 225, 59));
+  color: whitesmoke;
+  filter: drop-shadow(1px 1px 2px black);
+  border: none;
+  border-radius: 5px;
+  font-size: 20px;
+  padding: 10px 15px;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+#openPokedexButton:hover,
+.closeSettingsButton:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(rgba(255, 135, 0, 0.95), rgba(255, 220, 110, 0.95));
+  filter: brightness(1.08) drop-shadow(1px 1px 2px black);
+}
+
+#openPokedexButton {
+  cursor: pointer;
 }

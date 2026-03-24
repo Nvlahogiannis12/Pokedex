@@ -51,8 +51,15 @@ fetch("regions.json")
 }
 //Generates the New Height of the grid based on how many pokemon in the Region
 function calcCells(regionI, startNumber) {
-  let newH = Math.ceil(regionI / 9);
-  mapGrid(newH, 9, startNumber, regionI);
+   const screenWidth = window.innerWidth;
+
+  if (screenWidth < 768) {
+    let newH = Math.ceil(regionI / 5);
+    mapGrid(newH, 5, startNumber, regionI);
+  } else {
+    let newH = Math.ceil(regionI / 9);
+    mapGrid(newH, 9, startNumber, regionI);
+  }
 }
 
 //creates the grid

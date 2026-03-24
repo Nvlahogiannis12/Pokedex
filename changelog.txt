@@ -7,10 +7,18 @@ ________________________________________________________________________________
 - More info on each pokemon
 - Fixed Bug where some pokemon cries don't play
 - Added talking Pokedex
+- Added Moving Sprites
 
 
 Official Release
 ___________________________________________________________________________________________________________
+V1.1
+- Added a function to readjust amount of tiles based off screen size
+- Changed Colors to fit based off the Sinnoh Dex
+
+V1.01 (HOTFIX)
+- Fixed Branch Bug where site didn't save
+
 V1.0 (Shining Sounds Update)
 - Added Shiny Dex
 - Changed Some Styling

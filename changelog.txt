@@ -1,17 +1,23 @@
 Unreleased Versions
 ___________________________________________________________________________________________________________
 - Scroll through Dex
-- Region Maps
+- Add/Create Region Maps (With Clickable Routes)
 - Where to find every pokemon
 - Evolutions and Requirements for Evolution
 - More info on each pokemon
 - Fixed Bug where some pokemon cries don't play
 - Added talking Pokedex
 - Added Moving Sprites
+- Track Whos been caught and from where
 
 
 Official Release
 ___________________________________________________________________________________________________________
+V1.2
+- Added Version Counter
+- Added Megas
+- Added Gigantamaxes
+
 V1.1
 - Added a function to readjust amount of tiles based off screen size
 - Changed Colors to fit based off the Sinnoh Dex

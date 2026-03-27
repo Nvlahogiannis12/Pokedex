@@ -20,14 +20,22 @@
 <body class="container-fluid">
     <header class="navbar-header">
         <!-- Menu icon at the top left -->
-         <div><img class="settingIcon" src="imgs/icons8-settings-144-removebg-preview.png" onclick="menuToggleFilt()"></div>
+         <div><img class="settingIcon" src="imgs/Settings.png" onclick="menuToggleFilt()"></div>
         <div id="menuIcon"><img class="settingIcon" src="imgs/Pokedex_Icon.png"></div>
+        <p class="versionSite">V1.2</p>
     </header>
     <!-- Sidebar with links -->
     <nav class="sidebar" id="sidebar">
         <div class="Region_Title" id="list">
             <h1>Regions</h1>
         </div>
+        <button class="MegigaButton" onclick="clickGeneration(null, null, 'Mega')">
+  <img class="Sort-Icon" src="imgs/Mega_Icon.webp">
+</button>
+
+<button class="MegigaButton" onclick="clickGeneration(null, null, 'Gigantamax')">
+  <img class="Sort-Icon" src="imgs/GMAX_Icon.png">
+</button>
     </nav>
     <div id="pageOverlay" class="page-overlay hidden"></div>
     <main class="row">
@@ -38,6 +46,7 @@
                     <button id="openPokedexButton">Open Pokédex</button>
                     <p class="instructFadeIn">Press the Pokédex button or settings in the top-left corner to navigate to navigate</p>
                 </div>
+                <!--Where Pokedex Generates-->
                 <div id="griding"></div>
             </div>
             <div id="filterSettings" class="d-none">
@@ -68,5 +77,4 @@
         crossorigin="anonymous"></script>
     <script src="script.js"></script>
 </body>
-
 </html>

@@ -407,3 +407,20 @@ input:checked+.slider:before {
 #openPokedexButton {
   cursor: pointer;
 }
+.versionSite{
+  font-family: "Saira", sans-serif;
+  font-weight: 700;
+  color: rgb(28, 48, 48);
+  margin-left: auto;
+  margin-right: 10px;
+}
+.Sort-Icon{
+  width: 50px;
+  border:black 1px solid;
+  border-radius: 100%;
+}
+.MegigaButton{
+  background: transparent;
+  border: none;
+  padding: 0;
+}

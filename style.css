@@ -415,12 +415,12 @@ input:checked+.slider:before {
   margin-right: 10px;
 }
 .Sort-Icon{
-  width: 50px;
-  border:black 1px solid;
-  border-radius: 100%;
+  width: 50px !important;
+  border:black 1px solid !important;
+  border-radius: 100% !important;
 }
 .MegigaButton{
-  background: transparent;
-  border: none;
-  padding: 0;
+  background: transparent  !important;
+  border: none !important;
+  padding: 0 !important;
 }

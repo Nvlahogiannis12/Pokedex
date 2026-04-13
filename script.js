@@ -135,7 +135,7 @@ overlay.addEventListener("click", () => {
   howToMenu.classList.add("d-none");
 
   filterSettings.classList.toggle("d-none");
-
+ setSidebarOpen(false); 
   updateOverlay();
 };
 
@@ -143,7 +143,7 @@ window.menuToggleHowTo = function() {
   filterSettings.classList.add("d-none");
 
   howToMenu.classList.toggle("d-none");
-
+ setSidebarOpen(false); 
   updateOverlay();
 };
 

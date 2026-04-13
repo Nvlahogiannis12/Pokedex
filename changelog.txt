@@ -10,53 +10,64 @@ ________________________________________________________________________________
 - Added Moving Sprites
 - Track Whos been caught and from where
 
-
 Official Release
 ___________________________________________________________________________________________________________
-V1.2.3 
+V1.3 2026-04-13
+- Changed button order on home
+- Added A 'How to Use' button
+- Added empty Pokeball icon if sprite doesn't load
+- Added dates to the Changelog
+- Fixed Changlog errors
+- Changed styling to be more user friendly
+- Added Dark Filter when Settings is opened
+- Added Back to Top Functionality
+
+V1.2.3 2026-04-07
 - Added Mega Garchomp Z
 
-V1.2.2 
-- Fixed Bug regarding update release
+V1.2.2 2026-03-27
+- Fixed bug regarding update release
 
-V1.2.1 
-- Fixed Bug regarding update release
+V1.2.1 2026-03-27
+- Fixed bug regarding update release
 
-V1.2
-- Added Version Counter
+V1.2 2026-03-27
+[Big & Mega Update]
+- Added version counter
 - Added Megas
 - Added Gigantamaxes
 
-V1.1
+V1.1 2026-03-24
 - Added a function to readjust amount of tiles based off screen size
-- Changed Colors to fit based off the Sinnoh Dex
+- Changed colors to fit based off the Sinnoh Dex
 
-V1.01 (HOTFIX)
-- Fixed Branch Bug where site didn't save
+V1.01 (2026-03-24)
+- Fixed branch bug where site didn't save
 
-V1.0 (Shining Sounds Update)
+V1.0 (2026-03-16)
+[Shining Sounds Update]
 - Added Shiny Dex
-- Changed Some Styling
-- Added Enhanced Models back as a setting
-- Added Shiny Noise (Plays based on old or new models)
-- Changed Small Styling Issues
+- Changed some styling
+- Added 'Enhanced Models' back as a setting
+- Added Shiny noise (Plays based on old or new models)
+- Changed small styling issues
 
 
 BETA Release
 ___________________________________________________________________________________________________________
-v1.3
-- Added Favicon
-- Added Tabs for each Region in a nav-Bar
-- Changed Size of Pokedex boxes
+v1.3 (2026-03-12)
+- Added favicon
+- Added tabs for each region in a nav-bar
+- Changed size of Pokedex boxes
 
 v1.2 (2026-03-09)
-- Changed Folder Replacement location
-- Removed Beta 1.0 Reversion Availability
-- Changed Changelog Format
+- Changed folder replacement location
+- Removed Beta 1.0 reversion availability
+- Changed changelog format
 - Removed grey box around Pokemon
 - Changed the Pokemon from Background Images to Images in the tiles
-- Fixed Styling Issues
-- Added Pokemon Cries
+- Fixed styling issues
+- Added Pokemon cries
 
 v1.1 (2026-03-05)
 - Added Changelog Txt file

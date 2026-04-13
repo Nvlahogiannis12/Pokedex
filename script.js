@@ -9,6 +9,7 @@ let gigantamaxList = [];
 let formData = [];
 const shine = new Audio("audio/Shiny.mp3");
 const newShine = new Audio("audio/New_Shiny.mp3");
+
 // Store regions globally
 let regionsData = [];
 
@@ -45,6 +46,7 @@ function fetching() {
       button.textContent = item.name;
 
       button.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         clickGeneration(index, item, "Normal");
       });
 
@@ -56,9 +58,20 @@ function fetching() {
     const sidebar = document.getElementById("sidebar");
     const overlay = document.getElementById("pageOverlay");
     const openPokedexButton = document.getElementById("openPokedexButton");
+    const howToMenu = document.getElementById("howToMenu");
     const filterSettings = document.getElementById("filterSettings");
+
+    // Overlay Click (Close Everything)
+overlay.addEventListener("click", () => {
+  setSidebarOpen(false);
+  howToMenu.classList.add("d-none");
+  filterSettings.classList.add("d-none");
+  updateOverlay();
+});
+
     let isSidebarOpen = false;
 
+    // Sidebar Open / Close
     function setSidebarOpen(open) {
       if (open) {
         sidebar.classList.add("open");
@@ -69,18 +82,29 @@ function fetching() {
         overlay.classList.remove("visible");
         overlay.classList.add("hidden");
       }
+
       isSidebarOpen = open;
     }
 
+    // Menu Icon Click
     menuIcon.addEventListener("click", () => {
       filterSettings.classList.add("d-none");
+      howToMenu.classList.add("d-none");
       setSidebarOpen(!isSidebarOpen);
     });
 
-    overlay.addEventListener("click", () => setSidebarOpen(false));
+    // Overlay Click (Close Everything)
+    overlay.addEventListener("click", () => {
+      setSidebarOpen(false);
+      howToMenu.classList.add("d-none");
+      filterSettings.classList.add("d-none");
+    });
 
+    // Open Pokedex Button
     if (openPokedexButton) {
-      openPokedexButton.addEventListener("click", () => setSidebarOpen(true));
+      openPokedexButton.addEventListener("click", () => {
+        setSidebarOpen(true);
+      });
     }
 
     // Filter toggles update current grid (Mega/Gmax or normal)
@@ -97,13 +121,33 @@ function fetching() {
       else if (GigantamaxGraph) calcCells(gigantamaxList.length, 0);
     };
 
-    window.menuToggleFilt = function() {
-      const isHidden = filterSettings.classList.contains("d-none");
-      filterSettings.classList.toggle("d-none");
+  function updateOverlay() {
+  const isOpen =
+    !filterSettings.classList.contains("d-none") ||
+    !howToMenu.classList.contains("d-none");
 
-      if (!isHidden) return;
-      setSidebarOpen(false);
-    };
+  overlay.classList.toggle("visible", isOpen);
+  overlay.classList.toggle("hidden", !isOpen);
+}
+
+    // Filter Menu Toggle
+    window.menuToggleFilt = function() {
+  howToMenu.classList.add("d-none");
+
+  filterSettings.classList.toggle("d-none");
+
+  updateOverlay();
+};
+
+window.menuToggleHowTo = function() {
+  filterSettings.classList.add("d-none");
+
+  howToMenu.classList.toggle("d-none");
+
+  updateOverlay();
+};
+
+
 
   })
   .catch(error => console.error("Error loading JSON:", error));
@@ -236,6 +280,11 @@ function mapGrid(height, width, startNumber, totalCount) {
       else if (shinyToggle) img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${pokeID}.png`;
       else img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokeID}.png`;
 
+      img.onerror = function () {
+  this.onerror = null;
+  this.src = "imgs/TransparentPokeball.png";
+  };
+
       img.style.width = "100%";
       img.style.height = "100%";
       img.style.objectFit = "contain";
@@ -275,3 +324,23 @@ function SpecialEvo(evoType) {
     calcCells(gigantamaxList.length, 0);
   }
 }
+
+//Back To Top
+document.addEventListener("DOMContentLoaded", function () {
+  const backToTopBtn = document.getElementById("backToTopBtn");
+
+  window.addEventListener("scroll", function () {
+    if (window.pageYOffset > 50) {
+      backToTopBtn.classList.add("show");
+    } else {
+      backToTopBtn.classList.remove("show");
+    }
+  });
+
+  backToTopBtn.addEventListener("click", function () {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  });
+});

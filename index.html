@@ -21,8 +21,9 @@
     <header class="navbar-header">
         <!-- Menu icon at the top left -->
          <div><img class="settingIcon" src="imgs/Settings.png" onclick="menuToggleFilt()"></div>
-        <div id="menuIcon"><img class="settingIcon" src="imgs/Pokedex_Icon.png"></div>
-        <p class="versionSite">V1.2.3</p>
+        <div id="menuIcon"><img class="openDexIcon" src="imgs/Pokedex_Icon.png"></div>
+        <div id="howToIcon"><img class="howToIcon" src="imgs/HowTo.png" onclick="menuToggleHowTo()"></div>
+        <p class="versionSite">V1.3</p>
     </header>
     <!-- Sidebar with links -->
     <nav class="sidebar" id="sidebar">
@@ -43,8 +44,10 @@
             <div class="col-12" id="sprite">
                 <h1 class="spriteTitle my-2">Pokédex</h1>
                 <div id="instructions">
+                    <p class="instructFadeIn">Press the Pokédex button or settings in the top-left corner to navigate</p>
                     <button id="openPokedexButton">Open Pokédex</button>
-                    <p class="instructFadeIn">Press the Pokédex button or settings in the top-left corner to navigate to navigate</p>
+                        <br>
+                    <button id="howToButton" onclick="menuToggleHowTo()">How to Use</button>
                 </div>
                 <!--Where Pokedex Generates-->
                 <div id="griding"></div>
@@ -61,9 +64,20 @@
                     <input type="checkbox" id="enhancedToggle" onclick="toggleFilter('Enhanced')">
                     <span class="slider round"></span>
                 </label>
-                <button class="closeSettingsButton" onclick="menuToggleFilt()"><h3>Close Settings</h3></button>
+                <button class="closeSettingsButton" onclick="menuToggleFilt()"><h3>Close</h3></button>
+            </div>
+            <div id="howToMenu" class="howToMenu d-none">
+                <h1>How to Use</h1>
+                <p class="intro"></p>
+                 <button class="closeSettingsButton" onclick="menuToggleHowTo()"><h3>Close</h3></button>
             </div>
     </main>
+    <button id="backToTopBtn" class="back-to-top-btn" title="Back to Top">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 14L12 9L17 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
+        </svg>
+    </button>
     <footer>
         <!-- place footer here -->
     </footer>

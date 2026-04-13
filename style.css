@@ -10,8 +10,10 @@ body {
   margin: 0;
   padding: 0;
   padding-top: 50px;
-  --light: rgba(60, 168, 255, 0.5);
-  --dark: rgba(7, 98, 228, 0.5);
+  --light: rgba(20, 110, 251, 0.5);
+  --dark: rgba(7, 40, 228, 0.499);
+  --backgroundTan: #FEEAB8;
+  --ComplimentBorder: #ee9f27;
   background:
     repeating-linear-gradient(45deg,
       var(--light) 0 7px,
@@ -37,11 +39,11 @@ body {
 
 /* Navbar Header */
 .navbar-header {
-  background-color: rgb(255, 238, 187);
+  background-color: var(--backgroundTan);
   border-bottom: solid 12px;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
-  border-color: rgb(247,156,71);
+  border-color: var(--ComplimentBorder);
   padding: 8px 12px;
   position: fixed;
   top: 0;
@@ -79,7 +81,7 @@ main {
 .Region_Title {
   font-size: 65px;
   color: transparent;
-  background: linear-gradient(rgba(207, 71, 31), rgba(255, 225, 59));
+  background: linear-gradient(#dc6601, #f1b04c);
   background-clip: text;
   /*font-family: "Dex";*/
   font-family: "Saira", sans-serif;
@@ -155,7 +157,7 @@ main {
 .region-button {
   font-family: "Saira", sans-serif;
   font-weight: 700;
-  background: linear-gradient(rgba(207, 71, 31), rgba(255, 225, 59));
+  background: linear-gradient(#dc6601, #f1b04c);
   color: whitesmoke;
   /* margin: 3px; */
   filter: drop-shadow(1px 1px 2px black);
@@ -166,7 +168,7 @@ main {
   padding: 10px 15px;
   width: 100%;
   height: 50px;
-  margin-bottom:5px;
+  margin-bottom: 10px;
 }
 
 .menu-icon {
@@ -196,11 +198,11 @@ main {
   top: 50px;
   width: 200px;
   height: calc(100vh - 50px);
-  background-color: rgb(255, 238, 187);
+  background-color: var(--backgroundTan);
   border: solid 12px;
   border-bottom-right-radius: 10px;
   border-top-right-radius: 10px;
-  border-color: rgb(247,156,71);
+  border-color: var(--ComplimentBorder);
   transition: left 0.5s ease-in-out;
   /* Smooth transition */
   z-index: 999;
@@ -263,32 +265,32 @@ main {
   font-size: 24px;
 }
 
-#filterSettings, .howToMenu {
-  background-color: rgb(255, 238, 187);
+#filterSettings,
+.howToMenu {
+  background-color: var(--backgroundTan);
   position: fixed;
-  height: 450px;
-  aspect-ratio: 3/4;
+  max-height: 80vh;
+  width: min(450px, 90vw);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  margin-top: 20px;
   border: solid 12px;
   border-radius: 10px;
-  border-color: rgb(247,156,71);
+  border-color: var(--ComplimentBorder);
   color: rgb(28, 48, 48);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   padding: 20px;
   gap: 16px;
-  z-index:999;
+  z-index: 999;
+  overflow-y: auto;
 }
 
 .closeSettingsButton {
   margin-top: auto;
   border: none;
   border-radius: 8px;
-  background: linear-gradient(90deg, #ff6b6b, #ff9f43);
+  background: linear-gradient(#dc6601, #f1b04c);
   color: #fff;
   font-weight: 700;
   padding: 10px 16px;
@@ -363,12 +365,17 @@ input:checked+.slider:before {
   border-radius: 50%;
 }
 
-.settingIcon, .openDexIcon, .howToIcon {
+.settingIcon,
+.openDexIcon,
+.howToIcon {
   width: 50px;
-  margin-left:10px;
-  padding:3px
+  margin-left: 10px;
+  padding: 3px
 }
-.settingIcon:hover , .openDexIcon:hover, .howToIcon:hover {
+
+.settingIcon:hover,
+.openDexIcon:hover,
+.howToIcon:hover {
   filter: brightness(1.1);
   cursor: pointer;
   background-color: #555;
@@ -377,7 +384,7 @@ input:checked+.slider:before {
 .closeSettingsButton {
   font-family: "Saira", sans-serif;
   font-weight: 700;
-  background: linear-gradient(rgba(207, 71, 31), rgba(255, 225, 59));
+  background: linear-gradient(#dc6601, #f1b04c);
   color: whitesmoke;
   filter: drop-shadow(1px 1px 2px black);
   border: none;
@@ -392,7 +399,7 @@ input:checked+.slider:before {
 .closeHowToButton {
   font-family: "Saira", sans-serif;
   font-weight: 700;
-  background: linear-gradient(rgba(207, 71, 31), rgba(255, 225, 59));
+  background: linear-gradient(#dc6601, #f1b04c);
   color: whitesmoke;
   filter: drop-shadow(1px 1px 2px black);
   border: none;
@@ -400,12 +407,12 @@ input:checked+.slider:before {
   font-size: 20px;
   padding: 10px 15px;
   transition: transform 0.15s ease, filter 0.15s ease;
-  margin-top:5px;
+  margin-top: 5px;
 }
 
 #openPokedexButton:hover,
 .closeSettingsButton:hover,
-#howToButton:hover ,
+#howToButton:hover,
 .closeHowToButton:hover {
   transform: translateY(-1px);
   background: linear-gradient(rgba(255, 135, 0, 0.95), rgba(255, 220, 110, 0.95));
@@ -415,75 +422,90 @@ input:checked+.slider:before {
 #openPokedexButton {
   cursor: pointer;
 }
-.versionSite{
+
+.versionSite {
   font-family: "Saira", sans-serif;
   font-weight: 700;
   color: rgb(28, 48, 48);
   margin-left: auto;
   margin-right: 10px;
 }
-.Sort-Icon{
+
+.Sort-Icon {
   width: 50px !important;
-  border:black 1px solid !important;
+  border: black 1px solid !important;
   border-radius: 100% !important;
 }
-.MegigaButton{
-  background: transparent  !important;
+
+.MegigaButton {
+  background: transparent !important;
   border: none !important;
   padding: 0 !important;
+  margin-bottom: 10px;
 }
 
 
 /* Back to Top Button */
 .back-to-top-btn {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    width: 50px;
-    height: 50px;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    background: linear-gradient(rgba(207, 71, 31), rgba(255, 225, 59));
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(#dc6601, #f1b04c);
 }
 
 .back-to-top-btn:hover {
-    background-color: var(--accent-color);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  background-color: var(--accent-color);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
 .back-to-top-btn.show {
-    opacity: 1;
-    visibility: visible;
+  opacity: 1;
+  visibility: visible;
 }
 
 .back-to-top-btn svg {
-    width: 20px;
-    height: 20px;
+  width: 20px;
+  height: 20px;
 }
 
 /* Responsive Back to Top Button */
 @media (max-width: 768px) {
-    .back-to-top-btn {
-        bottom: 20px;
-        right: 20px;
-        width: 45px;
-        height: 45px;
-    }
+  .back-to-top-btn {
+    bottom: 20px;
+    right: 20px;
+    width: 45px;
+    height: 45px;
+  }
 
-    .back-to-top-btn svg {
-        width: 18px;
-        height: 18px;
-    }
+  .back-to-top-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+.seperationLine{
+  width: 80%;
+  height: 2px;
+  background-color: #dc6601;
+  margin: 20px auto;
+}
+.tutorialImage {
+  width: 50px;
+  height: 50px;
+  margin: auto;
 }

@@ -264,6 +264,14 @@ function mapGrid(height, width, startNumber, totalCount) {
       tile.addEventListener("click", async () => {
         const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokeID}/`);
         const data = await response.json();
+        
+        let safeNames = ["ho-oh", "porygon-z", "type-null", "jangmo-o", "hakamo-o", "kommo-o", "tapu-koko", "tapu-lele", "tapu-bulu", "tapu-fini", "wo-chien", "chien-pao", "ting-lu", "chi-yu",];
+
+        if (safeNames.includes(data.name)) {
+          data.name = data.name.replace("-", "");
+        } else if (data.name.includes("-")) {
+          data.name = data.name.substring(0, data.name.indexOf('-'));
+        }
 
         const cry = new Audio(`https://play.pokemonshowdown.com/audio/cries/${data.name}.mp3`);
         cry.play();

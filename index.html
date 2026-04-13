@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     <title>Pokédex</title>
     <!-- Required meta tags -->
@@ -20,10 +21,10 @@
 <body class="container-fluid">
     <header class="navbar-header">
         <!-- Menu icon at the top left -->
-         <div><img class="settingIcon" src="imgs/Settings.png" onclick="menuToggleFilt()"></div>
+        <div><img class="settingIcon" src="imgs/Settings.png" onclick="menuToggleFilt()"></div>
         <div id="menuIcon"><img class="openDexIcon" src="imgs/Pokedex_Icon.png"></div>
         <div id="howToIcon"><img class="howToIcon" src="imgs/HowTo.png" onclick="menuToggleHowTo()"></div>
-        <p class="versionSite">V1.3.1</p>
+        <p class="versionSite">V1.4</p>
     </header>
     <!-- Sidebar with links -->
     <nav class="sidebar" id="sidebar">
@@ -31,12 +32,12 @@
             <h1>Regions</h1>
         </div>
         <button class="MegigaButton" onclick="clickGeneration(null, null, 'Mega')">
-  <img class="Sort-Icon" src="imgs/Mega_Icon.webp">
-</button>
+            <img class="Sort-Icon" src="imgs/Mega_Icon.webp">
+        </button>
 
-<button class="MegigaButton" onclick="clickGeneration(null, null, 'Gigantamax')">
-  <img class="Sort-Icon" src="imgs/GMAX_Icon.png">
-</button>
+        <button class="MegigaButton" onclick="clickGeneration(null, null, 'Gigantamax')">
+            <img class="Sort-Icon" src="imgs/GMAX_Icon.png">
+        </button>
     </nav>
     <div id="pageOverlay" class="page-overlay hidden"></div>
     <main class="row">
@@ -44,10 +45,11 @@
             <div class="col-12" id="sprite">
                 <h1 class="spriteTitle my-2">Pokédex</h1>
                 <div id="instructions">
-                    <p class="instructFadeIn">Press the Pokédex button or settings in the top-left corner to navigate</p>
-                    <button id="openPokedexButton">Open Pokédex</button>
-                        <br>
-                    <button id="howToButton" onclick="menuToggleHowTo()">How to Use</button>
+                    <p class="instructFadeIn">Press the Pokédex button or settings in the top-left corner to navigate
+                    </p>
+                    <button id="openPokedexButton" class="pokedex-button">Open Pokédex</button>
+                    <br>
+                    <button id="howToButton" class="pokedex-button" onclick="menuToggleHowTo()">How to Use</button>
                 </div>
                 <!--Where Pokedex Generates-->
                 <div id="griding"></div>
@@ -64,12 +66,21 @@
                     <input type="checkbox" id="enhancedToggle" onclick="toggleFilter('Enhanced')">
                     <span class="slider round"></span>
                 </label>
-                <button class="closeSettingsButton" onclick="menuToggleFilt()"><h3>Close</h3></button>
+                <button class="closeSettingsButton" onclick="menuToggleFilt()">
+                    <h3>Close</h3>
+                </button>
             </div>
             <div id="howToMenu" class="howToMenu d-none">
                 <h1>How to Use</h1>
-                <p class="intro"></p>
-                 <button class="closeSettingsButton" onclick="menuToggleHowTo()"><h3>Close</h3></button>
+                <img class="tutorialImage" src="imgs/Pokedex_Icon.png">
+                <p class="intro">To Open Pokedex Press the Pokedex symbol in the top-left corner</p>
+                <img class="tutorialImage" src="imgs/Settings.png">
+                <p class="intro">To Open Settings Press the gear symbol in the top-left corner</p>
+                <img class="tutorialImage" src="imgs/HowTo.png">
+                <p class="intro">To Open Help Menu Press the question mark symbol in the top-left corner</p>
+                <button class="closeSettingsButton" onclick="menuToggleHowTo()">
+                    <h3>Close</h3>
+                </button>
             </div>
     </main>
     <button id="backToTopBtn" class="back-to-top-btn" title="Back to Top">
@@ -91,4 +102,5 @@
         crossorigin="anonymous"></script>
     <script src="script.js"></script>
 </body>
+
 </html>

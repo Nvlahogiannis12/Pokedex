@@ -1,17 +1,20 @@
 Unreleased Versions
 ___________________________________________________________________________________________________________
-- Scroll through Dex
-- Add/Create Region Maps (With Clickable Routes)
 - Where to find every pokemon
 - Evolutions and Requirements for Evolution
 - More info on each pokemon
-- Fixed Bug where some pokemon cries don't play
 - Added talking Pokedex
-- Added Moving Sprites
-- Track Whos been caught and from where
+- Added Moving Sprites (Delayed Indefinitely)
+- Track Whos been caught and from where (Delayed Indefinitely)
 
 Official Release
 ___________________________________________________________________________________________________________
+V1.4 2026-04-13
+- Fixed Bug where some pokemon cries don't play
+- Added updates on Unreleased Versions in changelog
+- Added better Spacing between buttons
+- Changed the Colors to be more vibrant & complimentary
+
 V1.3.1 2026-04-13
 - Fixed a Bug where the Pokedex Menu wouldn't disapear when Settings or Filter Menu opens
 

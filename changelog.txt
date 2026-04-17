@@ -5,10 +5,15 @@ ________________________________________________________________________________
 - More info on each pokemon
 - Added talking Pokedex
 - Added Moving Sprites (Delayed Indefinitely)
-- Track Whos been caught and from where (Delayed Indefinitely)
 
 Official Release
 ___________________________________________________________________________________________________________
+v1.5 2026
+- Fixed Cramorant form names in altForms.JSON
+- Changed Scroll Bar & Colors
+- Fixed Paradox Pokemon Cries not playing properly
+- Fixed Bug where Mega Cries don't play
+
 V1.4 2026-04-13
 - Fixed Bug where some pokemon cries don't play
 - Added updates on Unreleased Versions in changelog

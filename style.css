@@ -266,7 +266,7 @@ main {
 }
 
 #filterSettings,
-.howToMenu {
+.howToMenu, #openDexBox {
   background-color: var(--backgroundTan);
   position: fixed;
   max-height: 80vh;
@@ -508,4 +508,44 @@ input:checked+.slider:before {
   width: 50px;
   height: 50px;
   margin: auto;
+}
+
+/* Styling for Chrome, Safari, and Edge */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--backgroundTan); 
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ComplimentBorder); 
+  border-radius: 10px;
+  border: 1px solid whitesmoke; /* Creates a padding effect around the thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #dc6601; 
+}
+
+/* [id="1"]{
+  border: solid red 2px !important;
+}  */
+  
+.dataNameImg {
+  width: 60%;
+  height: auto;
+  display: block;
+}
+
+.dataNameImgContainer {
+  width: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: whitesmoke;
+  border-radius: 10px;
+  margin: 0 auto; 
 }

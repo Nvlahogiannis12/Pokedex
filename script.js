@@ -17,142 +17,137 @@ fetching();
 
 function fetching() {
   Promise.all([
-    fetch("regions.json").then(res => res.json()),
-    fetch("altForms.json").then(res => res.json())
+    fetch("regions.json").then((res) => res.json()),
+    fetch("altForms.json").then((res) => res.json()),
   ])
-  .then(([regions, altForms]) => {
+    .then(([regions, altForms]) => {
+      regionsData = regions;
+      formData = altForms;
 
-    regionsData = regions;
-    formData = altForms;
+      // Prepare Mega/Gigantamax lists
+      megaList = Object.entries(formData.Mega).map(([name, id]) => ({
+        name,
+        id: Number(id),
+      }));
 
-    // Prepare Mega/Gigantamax lists
-    megaList = Object.entries(formData.Mega).map(([name, id]) => ({
-      name,
-      id: Number(id)
-    }));
+      gigantamaxList = Object.entries(formData.Gmax).map(([name, id]) => ({
+        name,
+        id: Number(id),
+      }));
 
-    gigantamaxList = Object.entries(formData.Gmax).map(([name, id]) => ({
-      name,
-      id: Number(id)
-    }));
+      const container = document.getElementById("list");
+      container.innerHTML = "<h2>Regions</h2>";
 
-    const container = document.getElementById("list");
-    container.innerHTML = "<h2>Regions</h2>";
+      // Region buttons
+      regions.forEach((item, index) => {
+        const button = document.createElement("button");
+        button.classList.add("region-button");
+        button.textContent = item.name;
 
-    // Region buttons
-    regions.forEach((item, index) => {
-      const button = document.createElement("button");
-      button.classList.add("region-button");
-      button.textContent = item.name;
+        button.addEventListener("click", () => {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          clickGeneration(index, item, "Normal");
+        });
 
-      button.addEventListener("click", () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        clickGeneration(index, item, "Normal");
+        container.appendChild(button);
       });
 
-      container.appendChild(button);
-    });
+      // Sidebar & overlay logic
+      const menuIcon = document.getElementById("menuIcon");
+      const sidebar = document.getElementById("sidebar");
+      const overlay = document.getElementById("pageOverlay");
+      const openPokedexButton = document.getElementById("openPokedexButton");
+      const howToMenu = document.getElementById("howToMenu");
+      const filterSettings = document.getElementById("filterSettings");
 
-    // Sidebar & overlay logic
-    const menuIcon = document.getElementById("menuIcon");
-    const sidebar = document.getElementById("sidebar");
-    const overlay = document.getElementById("pageOverlay");
-    const openPokedexButton = document.getElementById("openPokedexButton");
-    const howToMenu = document.getElementById("howToMenu");
-    const filterSettings = document.getElementById("filterSettings");
-
-    // Overlay Click (Close Everything)
-overlay.addEventListener("click", () => {
-  setSidebarOpen(false);
-  howToMenu.classList.add("d-none");
-  filterSettings.classList.add("d-none");
-  updateOverlay();
-});
-
-    let isSidebarOpen = false;
-
-    // Sidebar Open / Close
-    function setSidebarOpen(open) {
-      if (open) {
-        sidebar.classList.add("open");
-        overlay.classList.remove("hidden");
-        overlay.classList.add("visible");
-      } else {
-        sidebar.classList.remove("open");
-        overlay.classList.remove("visible");
-        overlay.classList.add("hidden");
-      }
-
-      isSidebarOpen = open;
-    }
-
-    // Menu Icon Click
-    menuIcon.addEventListener("click", () => {
-      filterSettings.classList.add("d-none");
-      howToMenu.classList.add("d-none");
-      setSidebarOpen(!isSidebarOpen);
-    });
-
-    // Overlay Click (Close Everything)
-    overlay.addEventListener("click", () => {
-      setSidebarOpen(false);
-      howToMenu.classList.add("d-none");
-      filterSettings.classList.add("d-none");
-    });
-
-    // Open Pokedex Button
-    if (openPokedexButton) {
-      openPokedexButton.addEventListener("click", () => {
-        setSidebarOpen(true);
+      // Overlay Click (Close Everything)
+      overlay.addEventListener("click", () => {
+        setSidebarOpen(false);
+        howToMenu.classList.add("d-none");
+        filterSettings.classList.add("d-none");
+        updateOverlay();
       });
-    }
 
-    // Filter toggles update current grid (Mega/Gmax or normal)
-    window.toggleFilter = function(filterType) {
-      if (filterType === "Shiny") shinyToggle = !shinyToggle;
-      else if (filterType === "Enhanced") highClassFilter = !highClassFilter;
+      let isSidebarOpen = false;
 
-      // rebuild current grid
-      if (currentRegionStart !== null) {
-        calcCells(currentRegionCount, currentRegionStart);
+      // Sidebar Open / Close
+      function setSidebarOpen(open) {
+        if (open) {
+          sidebar.classList.add("open");
+          overlay.classList.remove("hidden");
+          overlay.classList.add("visible");
+        } else {
+          sidebar.classList.remove("open");
+          overlay.classList.remove("visible");
+          overlay.classList.add("hidden");
+        }
+
+        isSidebarOpen = open;
       }
-      // rebuild Mega/Gmax grid if showing
-      else if (MegaGraph) calcCells(megaList.length, 0);
-      else if (GigantamaxGraph) calcCells(gigantamaxList.length, 0);
-    };
 
-  function updateOverlay() {
-  const isOpen =
-    !filterSettings.classList.contains("d-none") ||
-    !howToMenu.classList.contains("d-none");
+      // Menu Icon Click
+      menuIcon.addEventListener("click", () => {
+        filterSettings.classList.add("d-none");
+        howToMenu.classList.add("d-none");
+        setSidebarOpen(!isSidebarOpen);
+      });
 
-  overlay.classList.toggle("visible", isOpen);
-  overlay.classList.toggle("hidden", !isOpen);
+      // Overlay Click (Close Everything)
+      overlay.addEventListener("click", () => {
+        setSidebarOpen(false);
+        howToMenu.classList.add("d-none");
+        filterSettings.classList.add("d-none");
+      });
+
+      // Open Pokedex Button
+      if (openPokedexButton) {
+        openPokedexButton.addEventListener("click", () => {
+          setSidebarOpen(true);
+        });
+      }
+
+      // Filter toggles update current grid (Mega/Gmax or normal)
+      window.toggleFilter = function (filterType) {
+        if (filterType === "Shiny") shinyToggle = !shinyToggle;
+        else if (filterType === "Enhanced") highClassFilter = !highClassFilter;
+
+        // rebuild current grid
+        if (currentRegionStart !== null) {
+          calcCells(currentRegionCount, currentRegionStart);
+        }
+        // rebuild Mega/Gmax grid if showing
+        else if (MegaGraph) calcCells(megaList.length, 0);
+        else if (GigantamaxGraph) calcCells(gigantamaxList.length, 0);
+      };
+
+      function updateOverlay() {
+        const isOpen =
+          !filterSettings.classList.contains("d-none") ||
+          !howToMenu.classList.contains("d-none");
+
+        overlay.classList.toggle("visible", isOpen);
+        overlay.classList.toggle("hidden", !isOpen);
+      }
+
+      // Filter Menu Toggle
+      window.menuToggleFilt = function () {
+        howToMenu.classList.add("d-none");
+
+        filterSettings.classList.toggle("d-none");
+        setSidebarOpen(false);
+        updateOverlay();
+      };
+
+      window.menuToggleHowTo = function () {
+        filterSettings.classList.add("d-none");
+
+        howToMenu.classList.toggle("d-none");
+        setSidebarOpen(false);
+        updateOverlay();
+      };
+    })
+    .catch((error) => console.error("Error loading JSON:", error));
 }
-
-    // Filter Menu Toggle
-    window.menuToggleFilt = function() {
-  howToMenu.classList.add("d-none");
-
-  filterSettings.classList.toggle("d-none");
- setSidebarOpen(false); 
-  updateOverlay();
-};
-
-window.menuToggleHowTo = function() {
-  filterSettings.classList.add("d-none");
-
-  howToMenu.classList.toggle("d-none");
- setSidebarOpen(false); 
-  updateOverlay();
-};
-
-
-
-  })
-  .catch(error => console.error("Error loading JSON:", error));
-}
-
 
 // Handles clicking Regions / Mega / Gigantamax
 function clickGeneration(index, item, Type) {
@@ -207,8 +202,6 @@ function clickGeneration(index, item, Type) {
   }
 }
 
-
-
 // Generates the new grid height based on number of Pokémon
 function calcCells(regionI, startNumber) {
   const screenWidth = window.innerWidth;
@@ -229,7 +222,6 @@ function calcCells(regionI, startNumber) {
   let newH = Math.ceil(regionI / width);
   mapGrid(newH, width, startNumber, regionI);
 }
-
 
 // Creates the grid
 function mapGrid(height, width, startNumber, totalCount) {
@@ -256,42 +248,132 @@ function mapGrid(height, width, startNumber, totalCount) {
 
       tile.dataset.index = pokeID;
       tile.id = pokeID;
+
       container.appendChild(tile);
 
       createdCount++;
 
       // Pokémon Cries
       tile.addEventListener("click", async () => {
-        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokeID}/`);
+        const response = await fetch(
+          `https://pokeapi.co/api/v2/pokemon/${pokeID}/`,
+        );
         const data = await response.json();
-        
-        let safeNames = ["ho-oh", "porygon-z", "type-null", "jangmo-o", "hakamo-o", "kommo-o", "tapu-koko", "tapu-lele", "tapu-bulu", "tapu-fini", "wo-chien", "chien-pao", "ting-lu", "chi-yu",];
 
-        if (safeNames.includes(data.name)) {
-          data.name = data.name.replace("-", "");
-        } else if (data.name.includes("-")) {
-          data.name = data.name.substring(0, data.name.indexOf('-'));
+        let safeNames = [
+          "ho-oh",
+          "porygon-z",
+          "type-null",
+          "jangmo-o",
+          "hakamo-o",
+          "kommo-o",
+          "tapu-koko",
+          "tapu-lele",
+          "tapu-bulu",
+          "tapu-fini",
+          "wo-chien",
+          "chien-pao",
+          "ting-lu",
+          "chi-yu",
+          "great-tusk",
+          "scream-tail",
+          "brute-bonnet",
+          "flutter-mane",
+          "slither-wing",
+          "sandy-shocks",
+          "iron-treads",
+          "iron-bundle",
+          "iron-hands",
+          "iron-jugulis",
+          "iron-moth",
+          "iron-thorns",
+          "walking-wake",
+          "iron-leaves",
+          "iron-boulder",
+          "iron-crown",
+          "gouging-fire",
+          "raging-bolt",
+        ];
+        function formatName(name) {
+          // 1. Special mega/gmax cases first
+          if (name.includes("-mega-y")) {
+            name = name.replace("-mega-y", "-megay");
+          }
+
+          if (name.includes("-mega-x")) {
+            name = name.replace("-mega-x", "-megax");
+          }
+
+          // 2. Preserve all other mega / gmax forms EXACTLY
+          if (name.includes("-mega") || name.includes("-gmax")) {
+            name = name;
+          }
+
+          // 3. safeNames rule (remove hyphen entirely)
+          if (safeNames.includes(name)) {
+            name = name.replace(/-/g, "");
+          }
+
+          // 4. default rule: cut at first hyphen
+          if (name.includes("-")) {
+            data.name = name.substring(0, name.indexOf("-"));
+          }
+          data.name = name;
         }
-
-        const cry = new Audio(`https://play.pokemonshowdown.com/audio/cries/${data.name}.mp3`);
+        const newName = formatName(data.name);
+        const cry = new Audio(
+          `https://play.pokemonshowdown.com/audio/cries/${data.name}.mp3`,
+        );
         cry.play();
 
-        if (shinyToggle && highClassFilter) setTimeout(() => newShine.play(), 1500);
+        if (shinyToggle && highClassFilter)
+          setTimeout(() => newShine.play(), 1500);
         else if (shinyToggle) setTimeout(() => shine.play(), 1500);
-      });
 
+        //name display
+        // Determine filtered image
+        let displayImg;
+
+        if (shinyToggle && highClassFilter)
+          displayImg = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${pokeID}.png`;
+        else if (highClassFilter)
+          displayImg = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokeID}.png`;
+        else if (shinyToggle)
+          displayImg = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${pokeID}.png`;
+        else
+          displayImg = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokeID}.png`;
+
+        // Name Display
+        dataNameNumber.innerHTML = `
+<h1>
+#${pokeID} - ${data.name.charAt(0).toUpperCase() + data.name.slice(1)}
+</h1>
+
+<div class="dataNameImgContainer">
+  <img 
+    class="dataNameImg" 
+    src="${displayImg}" 
+    alt="imgs/TransparentPokeball.png"
+    onerror="this.src='imgs/TransparentPokeball.png'"
+  >
+</div>`;
+      });
       // Pokémon Image
       let img = document.createElement("img");
 
-      if (shinyToggle && highClassFilter) img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${pokeID}.png`;
-      else if (highClassFilter) img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokeID}.png`;
-      else if (shinyToggle) img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${pokeID}.png`;
-      else img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokeID}.png`;
+      if (shinyToggle && highClassFilter)
+        img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${pokeID}.png`;
+      else if (highClassFilter)
+        img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokeID}.png`;
+      else if (shinyToggle)
+        img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${pokeID}.png`;
+      else
+        img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokeID}.png`;
 
       img.onerror = function () {
-  this.onerror = null;
-  this.src = "imgs/TransparentPokeball.png";
-  };
+        this.onerror = null;
+        this.src = "imgs/TransparentPokeball.png";
+      };
 
       img.style.width = "100%";
       img.style.height = "100%";
@@ -303,7 +385,6 @@ function mapGrid(height, width, startNumber, totalCount) {
   }
 }
 
-
 // Filters the grid to show only Pokémon in the region
 function filterRegionTiles(start, end) {
   const tiles = document.querySelectorAll(".grid-cell");
@@ -314,7 +395,6 @@ function filterRegionTiles(start, end) {
     else tile.style.display = "block";
   });
 }
-
 
 // Special Evolution Viewer
 function SpecialEvo(evoType) {

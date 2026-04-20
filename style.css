@@ -118,12 +118,6 @@ main {
   width: 90%;
 }
 
-.instructFadeIn {
-  animation: bob 3.5s ease-in-out infinite;
-  display: block;
-  margin-top: 8px;
-  color: rgb(80, 80, 80);
-}
 
 @keyframes bob {
 
@@ -266,7 +260,8 @@ main {
 }
 
 #filterSettings,
-.howToMenu, #openDexBox {
+.howToMenu,
+#openDexBox {
   background-color: var(--backgroundTan);
   position: fixed;
   max-height: 80vh;
@@ -498,12 +493,14 @@ input:checked+.slider:before {
     height: 18px;
   }
 }
-.seperationLine{
+
+.seperationLine {
   width: 80%;
   height: 2px;
   background-color: #dc6601;
   margin: 20px auto;
 }
+
 .tutorialImage {
   width: 50px;
   height: 50px;
@@ -516,36 +513,54 @@ input:checked+.slider:before {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--backgroundTan); 
+  background: var(--backgroundTan);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--ComplimentBorder); 
+  background: var(--ComplimentBorder);
   border-radius: 10px;
-  border: 1px solid whitesmoke; /* Creates a padding effect around the thumb */
+  border: 1px solid whitesmoke;
+  /* Creates a padding effect around the thumb */
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #dc6601; 
+  background: #dc6601;
 }
 
 /* [id="1"]{
   border: solid red 2px !important;
 }  */
-  
-.dataNameImg {
-  width: 60%;
-  height: auto;
+
+/* .dataNameImg {
   display: block;
-}
+} */
 
 .dataNameImgContainer {
-  width: 90%;
+  height: 250px !important;
+  width: 95% !important;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: whitesmoke;
   border-radius: 10px;
-  margin: 0 auto; 
+  margin: 0 auto;
+}
+.dataNameImg{
+  width: auto !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  max-width: 100%;
+  max-height: 300px;
+}
+
+.modal-dialog {
+  width: 50%;
+  height: auto;
+}
+.modal-content {
+  background-color: var(--backgroundTan);
+  border: solid 8px;
+  border-radius: 10px;
+  border-color: var(--ComplimentBorder);  
 }

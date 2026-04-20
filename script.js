@@ -283,6 +283,7 @@ function mapGrid(height, width, startNumber, totalCount) {
           "flutter-mane",
           "slither-wing",
           "sandy-shocks",
+          "roaring-moon",
           "iron-treads",
           "iron-bundle",
           "iron-hands",
@@ -297,32 +298,37 @@ function mapGrid(height, width, startNumber, totalCount) {
           "raging-bolt",
         ];
         function formatName(name) {
-          // 1. Special mega/gmax cases first
+          // 1. Special mega / gmax / primal cases first
           if (name.includes("-mega-y")) {
-            name = name.replace("-mega-y", "-megay");
+            return name.replace("-mega-y", "-megay");
           }
 
           if (name.includes("-mega-x")) {
-            name = name.replace("-mega-x", "-megax");
+            return name.replace("-mega-x", "-megax");
           }
 
-          // 2. Preserve all other mega / gmax forms EXACTLY
-          if (name.includes("-mega") || name.includes("-gmax")) {
-            name = name;
+          if (
+            name.includes("-mega") ||
+            name.includes("-gmax") ||
+            name.includes("-primal") ||
+            name.includes("-eternamax")
+          ) {
+            return name;
           }
 
-          // 3. safeNames rule (remove hyphen entirely)
+          // 2. safeNames rule (remove hyphen entirely)
           if (safeNames.includes(name)) {
-            name = name.replace(/-/g, "");
+            return name.replace(/-/g, "");
           }
 
-          // 4. default rule: cut at first hyphen
+          // 3. default rule: cut at first hyphen for all other names
           if (name.includes("-")) {
-            data.name = name.substring(0, name.indexOf("-"));
+            return name.substring(0, name.indexOf("-"));
           }
-          data.name = name;
+
+          return name;
         }
-        const newName = formatName(data.name);
+        data.name = formatName(data.name);
         const cry = new Audio(
           `https://play.pokemonshowdown.com/audio/cries/${data.name}.mp3`,
         );
@@ -335,48 +341,60 @@ function mapGrid(height, width, startNumber, totalCount) {
         //name display
         // Determine filtered image
         let displayImg;
+        let fallbackImg;
 
-        if (shinyToggle && highClassFilter)
-          displayImg = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${pokeID}.png`;
-        else if (highClassFilter)
-          displayImg = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokeID}.png`;
-        else if (shinyToggle)
-          displayImg = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${pokeID}.png`;
-        else
-          displayImg = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokeID}.png`;
+        if (shinyToggle) {
+          displayImg = `https://play.pokemonshowdown.com/sprites/ani-shiny/${data.name}.gif`;
+          fallbackImg = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${data.id}.png`;
+        } else {
+          displayImg = `https://play.pokemonshowdown.com/sprites/ani/${data.name}.gif`;
+          fallbackImg = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data.id}.png`;
+        }
 
         // Name Display
-        document.getElementById('modal').innerHTML = `
+        document.getElementById("modal").innerHTML = `
 
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">#${pokeID} - ${data.name.charAt(0).toUpperCase() + data.name.slice(1)}</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
+<div class="modal-content">
+  <div class="modal-header">
+    <h1 class="modal-title fs-5" id="exampleModalLabel">
+      #${pokeID} - ${data.name.charAt(0).toUpperCase() + data.name.slice(1)}
+    </h1>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+  </div>
 
-        <div class="dataNameImgContainer">
-  <img 
-    class="dataNameImg" 
-    src="${displayImg}" 
-    alt="imgs/TransparentPokeball.png"
-    onerror="this.src='imgs/TransparentPokeball.png'"
-  >
-</div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
+  <div class="modal-body">
+    <div class="dataNameImgContainer">
+      <img 
+        class="dataNameImg" 
+        src="${displayImg}"
+        onerror="this.src='${fallbackImg}'"
+      >
     </div>
-  </div>;`
+  </div>
 
-  const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
-modal.show();
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+      Close
+    </button>
+  </div>
+</div>`;
+
+        const modal = new bootstrap.Modal(
+          document.getElementById("exampleModal"),
+        );
+        modal.show();
       });
-      // Pokémon Image
+      // Pokémon Image & Try again if its an error
+      
       let img = document.createElement("img");
+      img.onerror = function () {
+  if (!this.dataset.retry) {
+    this.dataset.retry = "1";
+    this.src = this.src + "?retry=" + Date.now();
+  } else {
+    this.src = "imgs/TransparentPokeball.png";
+  }
+};
 
       if (shinyToggle && highClassFilter)
         img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${pokeID}.png`;
@@ -387,10 +405,11 @@ modal.show();
       else
         img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokeID}.png`;
 
-      img.onerror = function () {
-        this.onerror = null;
-        this.src = "imgs/TransparentPokeball.png";
-      };
+      setTimeout(() => {
+  img.src = url;
+}, createdCount * 5);
+
+      img.setAttribute("onerror", "this.src='imgs/TransparentPokeball.png'");
 
       img.style.width = "100%";
       img.style.height = "100%";

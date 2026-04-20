@@ -248,6 +248,8 @@ function mapGrid(height, width, startNumber, totalCount) {
 
       tile.dataset.index = pokeID;
       tile.id = pokeID;
+      tile.setAttribute("data-bs-toggle", "modal");
+      tile.setAttribute("data-bs-target", "#staticBackdrop");
 
       container.appendChild(tile);
 
@@ -344,19 +346,34 @@ function mapGrid(height, width, startNumber, totalCount) {
           displayImg = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokeID}.png`;
 
         // Name Display
-        dataNameNumber.innerHTML = `
-<h1>
-#${pokeID} - ${data.name.charAt(0).toUpperCase() + data.name.slice(1)}
-</h1>
+        document.getElementById('modal').innerHTML = `
 
-<div class="dataNameImgContainer">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">#${pokeID} - ${data.name.charAt(0).toUpperCase() + data.name.slice(1)}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <div class="dataNameImgContainer">
   <img 
     class="dataNameImg" 
     src="${displayImg}" 
     alt="imgs/TransparentPokeball.png"
     onerror="this.src='imgs/TransparentPokeball.png'"
   >
-</div>`;
+</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>;`
+
+  const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
+modal.show();
       });
       // Pokémon Image
       let img = document.createElement("img");

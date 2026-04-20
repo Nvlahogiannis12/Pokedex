@@ -284,6 +284,7 @@ function mapGrid(height, width, startNumber, totalCount) {
           "slither-wing",
           "sandy-shocks",
           "roaring-moon",
+          "iron-valiant",
           "iron-treads",
           "iron-bundle",
           "iron-hands",
@@ -305,6 +306,10 @@ function mapGrid(height, width, startNumber, totalCount) {
 
           if (name.includes("-mega-x")) {
             return name.replace("-mega-x", "-megax");
+          }
+
+          if (name.includes("-mega-z")) {
+            return name.replace("-mega-z", "-megaz");
           }
 
           if (
@@ -329,6 +334,7 @@ function mapGrid(height, width, startNumber, totalCount) {
           return name;
         }
         data.name = formatName(data.name);
+
         const cry = new Audio(
           `https://play.pokemonshowdown.com/audio/cries/${data.name}.mp3`,
         );
@@ -351,14 +357,63 @@ function mapGrid(height, width, startNumber, totalCount) {
           fallbackImg = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data.id}.png`;
         }
 
+        let displayName = data.name.charAt(0).toUpperCase() + data.name.slice(1);
+        formatDisplayName(data.name);
+
+        function formatDisplayName(name) {
+          if(name.includes("gmax")) {
+            name = name.replace("-gmax", "");
+            displayName = "Gigantamax " + name.charAt(0).toUpperCase() + name.slice(1);
+          }
+           if(name.includes("eternamax")) {
+            name = name.replace("-eternamax", "");
+            displayName = "Eternamax " + name.charAt(0).toUpperCase() + name.slice(1);
+          }
+
+          
+            if(name.includes("-x")) {
+              name = name.replace("-mega-x", "");
+              displayName = "Mega " + name.charAt(0).toUpperCase() + name.slice(1) + " X";
+              
+            }
+
+            if(name.includes("-y")) {
+              name = name.replace("-mega-y", "");
+              displayName = "Mega " + name.charAt(0).toUpperCase() + name.slice(1) + " Y";
+              
+            } 
+            if(name.includes("-z")) {
+              name = name.replace("-mega-z", "");
+              displayName = "Mega " + name.charAt(0).toUpperCase() + name.slice(1) + " Z";
+              
+            }
+          if(name.includes("mega")) {
+            name = name.replace("-mega", "");
+            displayName = "Mega " + name.charAt(0).toUpperCase() + name.slice(1);
+          }
+          if (name.includes("primal")) {
+            name = name.replace("-primal", "");
+            displayName = "Primal " + name.charAt(0).toUpperCase() + name.slice(1);
+          }
+
+         // alert(displayName);
+        }
+
         // Name Display
         document.getElementById("modal").innerHTML = `
-
 <div class="modal-content">
   <div class="modal-header">
     <h1 class="modal-title fs-5" id="exampleModalLabel">
-      #${pokeID} - ${data.name.charAt(0).toUpperCase() + data.name.slice(1)}
+      #${pokeID} - ${displayName}
     </h1>
+    <div class="typeContainer">
+      ${data.types
+        .map(
+          (typeInfo) =>
+            `<p class="${typeInfo.type.name}">${typeInfo.type.name}</p>`,
+        )
+        .join("")}
+    </div>
     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
   </div>
 
@@ -379,22 +434,28 @@ function mapGrid(height, width, startNumber, totalCount) {
   </div>
 </div>`;
 
+        // Add click event listener for the image to play cry
+        const imgElement = document.querySelector('.dataNameImg');
+        if (imgElement) {
+          imgElement.addEventListener('click', () => cry.play());
+        }
+
         const modal = new bootstrap.Modal(
           document.getElementById("exampleModal"),
         );
         modal.show();
       });
       // Pokémon Image & Try again if its an error
-      
+
       let img = document.createElement("img");
       img.onerror = function () {
-  if (!this.dataset.retry) {
-    this.dataset.retry = "1";
-    this.src = this.src + "?retry=" + Date.now();
-  } else {
-    this.src = "imgs/TransparentPokeball.png";
-  }
-};
+        if (!this.dataset.retry) {
+          this.dataset.retry = "1";
+          this.src = this.src + "?retry=" + Date.now();
+        } else {
+          this.src = "imgs/TransparentPokeball.png";
+        }
+      };
 
       if (shinyToggle && highClassFilter)
         img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${pokeID}.png`;
@@ -406,8 +467,8 @@ function mapGrid(height, width, startNumber, totalCount) {
         img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokeID}.png`;
 
       setTimeout(() => {
-  img.src = url;
-}, createdCount * 5);
+        img.src = url;
+      }, createdCount * 5);
 
       img.setAttribute("onerror", "this.src='imgs/TransparentPokeball.png'");
 

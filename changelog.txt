@@ -1,10 +1,9 @@
 Unreleased Versions
 ___________________________________________________________________________________________________________
-- Where to find every pokemon
+- Where to find every pokemon (Dex Nav Equivalent)
 - Evolutions and Requirements for Evolution
 - More info on each pokemon
 - Added talking Pokedex
-- Added Moving Sprites (Delayed Indefinitely)
 
 Official Release
 ___________________________________________________________________________________________________________
@@ -13,6 +12,7 @@ v1.5 2026
 - Changed Scroll Bar & Colors
 - Fixed Paradox Pokemon Cries not playing properly
 - Fixed Bug where Mega Cries don't play
+- Added Moving Sprites when clicked
 
 V1.4 2026-04-13
 - Fixed Bug where some pokemon cries don't play

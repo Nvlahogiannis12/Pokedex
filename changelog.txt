@@ -11,7 +11,7 @@ v1.5 2026
 - Fixed Cramorant form names in altForms.JSON
 - Changed Scroll Bar & Colors
 - Fixed Paradox Pokemon Cries not playing properly
-- Fixed Bug where Mega Cries don't play
+- Fixed Bug where Cries don't play
 - Added Moving Sprites when clicked
 
 V1.4 2026-04-13

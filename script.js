@@ -262,6 +262,10 @@ function mapGrid(height, width, startNumber, totalCount) {
         );
         const data = await response.json();
 
+        // Get species data for genus/category
+        const speciesResponse = await fetch(data.species.url);
+        const speciesData = await speciesResponse.json();
+
         let safeNames = [
           "ho-oh",
           "porygon-z",
@@ -335,9 +339,7 @@ function mapGrid(height, width, startNumber, totalCount) {
         }
         data.name = formatName(data.name);
 
-        const cry = new Audio(
-          `https://play.pokemonshowdown.com/audio/cries/${data.name}.mp3`,
-        );
+        const cry = new Audio(data.cries.latest);
         cry.play();
 
         if (shinyToggle && highClassFilter)
@@ -357,55 +359,162 @@ function mapGrid(height, width, startNumber, totalCount) {
           fallbackImg = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data.id}.png`;
         }
 
-        let displayName = data.name.charAt(0).toUpperCase() + data.name.slice(1);
+        let displayName =
+          data.name.charAt(0).toUpperCase() + data.name.slice(1);
         formatDisplayName(data.name);
 
         function formatDisplayName(name) {
-          if(name.includes("gmax")) {
+          const displayNameMap = {
+            "mr-mime": "Mr. Mime",
+            "mr-rime": "Mr. Rime",
+            "mime-jr": "Mime Jr.",
+            "type-null": "Type: Null",
+            "porygon-z": "Porygon2",
+            "nidoran-m": "Nidoran♂",
+            "nidoran-f": "Nidoran♀",
+            "farfetch-d": "Farfetch'd",
+            "ho-oh": "Ho-Oh",
+            "jangmo-o": "Jangmo-o",
+            "hakamo-o": "Hakamo-o",
+            "kommo-o": "Kommo-o",
+            "tapu-koko": "Tapu Koko",
+            "tapu-lele": "Tapu Lele",
+            "tapu-bulu": "Tapu Bulu",
+            "tapu-fini": "Tapu Fini",
+            "wo-chien": "Wo-Chien",
+            "chien-pao": "Chien-Pao",
+            "ting-lu": "Ting-Lu",
+            "chi-yu": "Chi-Yu",
+            "great-tusk": "Great Tusk",
+            "scream-tail": "Scream Tail",
+            "brute-bonnet": "Brute Bonnet",
+            "flutter-mane": "Flutter Mane",
+            "slither-wing": "Slither Wing",
+            "sandy-shocks": "Sandy Shocks",
+            "roaring-moon": "Roaring Moon",
+            "iron-valiant": "Iron Valiant",
+            "iron-treads": "Iron Treads",
+            "iron-bundle": "Iron Bundle",
+            "iron-hands": "Iron Hands",
+            "iron-jugulis": "Iron Jugulis",
+            "iron-moth": "Iron Moth",
+            "iron-thorns": "Iron Thorns",
+            "walking-wake": "Walking Wake",
+            "iron-leaves": "Iron Leaves",
+            "iron-boulder": "Iron Boulder",
+            "iron-crown": "Iron Crown",
+            "gouging-fire": "Gouging Fire",
+            "raging-bolt": "Raging Bolt",
+          };
+
+          // Check display name map first
+          if (displayNameMap[name]) {
+            displayName = displayNameMap[name];
+            return;
+          }
+
+          if (name.includes("gmax")) {
             name = name.replace("-gmax", "");
-            displayName = "Gigantamax " + name.charAt(0).toUpperCase() + name.slice(1);
+            displayName =
+              "Gigantamax " + name.charAt(0).toUpperCase() + name.slice(1);
           }
-           if(name.includes("eternamax")) {
+          if (name.includes("eternamax")) {
             name = name.replace("-eternamax", "");
-            displayName = "Eternamax " + name.charAt(0).toUpperCase() + name.slice(1);
+            displayName =
+              "Eternamax " + name.charAt(0).toUpperCase() + name.slice(1);
           }
 
-          
-            if(name.includes("-x")) {
-              name = name.replace("-mega-x", "");
-              displayName = "Mega " + name.charAt(0).toUpperCase() + name.slice(1) + " X";
-              
-            }
+          if (name.includes("-megax")) {
+            name = name.replace("-megax", "");
+            displayName =
+              "Mega " + name.charAt(0).toUpperCase() + name.slice(1) + " X";
+          }
 
-            if(name.includes("-y")) {
-              name = name.replace("-mega-y", "");
-              displayName = "Mega " + name.charAt(0).toUpperCase() + name.slice(1) + " Y";
-              
-            } 
-            if(name.includes("-z")) {
-              name = name.replace("-mega-z", "");
-              displayName = "Mega " + name.charAt(0).toUpperCase() + name.slice(1) + " Z";
-              
-            }
-          if(name.includes("mega")) {
+          if (name.includes("-megay")) {
+            name = name.replace("-megay", "");
+            displayName =
+              "Mega " + name.charAt(0).toUpperCase() + name.slice(1) + " Y";
+          }
+          if (name.includes("-megaz")) {
+            name = name.replace("-megaz", "");
+            displayName =
+              "Mega " + name.charAt(0).toUpperCase() + name.slice(1) + " Z";
+          }
+          if (name.includes("mega")) {
             name = name.replace("-mega", "");
-            displayName = "Mega " + name.charAt(0).toUpperCase() + name.slice(1);
+            displayName =
+              "Mega " + name.charAt(0).toUpperCase() + name.slice(1);
           }
           if (name.includes("primal")) {
             name = name.replace("-primal", "");
-            displayName = "Primal " + name.charAt(0).toUpperCase() + name.slice(1);
+            displayName =
+              "Primal " + name.charAt(0).toUpperCase() + name.slice(1);
           }
 
-         // alert(displayName);
+          // alert(displayName);
         }
+        
 
-        // Name Display
+        //Detects Forms and adds them to an array to be displayed in the modal
+let forms = [];
+detectForms(displayName);
+
+function detectForms(baseName) {
+  forms = [];
+  
+  forms.push({ 
+    type: "Base Form",
+    name: `${baseName}` ,
+    img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data.id}.png`
+  });
+  // Check for Mega Evolution
+  const megaKey = `Mega ${baseName}`;
+  if (formData.Mega && formData.Mega[megaKey]) {
+    forms.push({
+      type: "Mega Evolution",
+      name: megaKey,
+      img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${formData.Mega[megaKey]}.png`,
+    });
+  }
+  
+  // Check for Gigantamax
+  const gmaxKey = `Gigantamax ${baseName}`;
+  if (formData.Gmax && formData.Gmax[gmaxKey]) {
+    forms.push({
+      type: "Gigantamax",
+      name: gmaxKey,
+      img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${formData.Gmax[gmaxKey]}.png`,
+    });
+  }
+  
+  // Check for misc forms (e.g., regional variants)
+  if (formData.miscForms) {
+    Object.entries(formData.miscForms).forEach(([key, id]) => {
+      if (key.toLowerCase().includes(data.name.toLowerCase())) {
+        forms.push({
+          type: "Special Form",
+          name: key,
+          img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
+        });
+      }
+    });
+  }
+  
+}
+
+        const categoryObj = speciesData.genera.find(
+          (item) => item.language.name === "en",
+        );
+        const category = categoryObj ? categoryObj.genus : "Unknown";
+
+        // Modal Display
         document.getElementById("modal").innerHTML = `
 <div class="modal-content">
   <div class="modal-header">
     <h1 class="modal-title fs-5" id="exampleModalLabel">
       #${pokeID} - ${displayName}
     </h1>
+    <p class="pokemonCategory">${category}</p>
     <div class="typeContainer">
       ${data.types
         .map(
@@ -425,19 +534,33 @@ function mapGrid(height, width, startNumber, totalCount) {
         onerror="this.src='${fallbackImg}'"
       >
     </div>
+    
+    ${forms.length > 0 ? `
+      <div id="formsSection" class="${forms.length === 1 ? 'd-none' : ''} formsSection">
+        <div class="formsContainer">
+          ${forms.map(form => `
+            <div style="text-align: center;">
+              <img src="${form.img}" alt="${form.name}" style="width: 65px; height: 65px; object-fit: contain;" onerror="this.style.display='none'">
+              <p style="font-size: 12px; margin: 5px 0;">${form.name}</p>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    ` : ''}
   </div>
 
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+    <button type="button" class="btn-modalclose" data-bs-dismiss="modal">
       Close
     </button>
   </div>
 </div>`;
 
+
         // Add click event listener for the image to play cry
-        const imgElement = document.querySelector('.dataNameImg');
+        const imgElement = document.querySelector(".dataNameImg");
         if (imgElement) {
-          imgElement.addEventListener('click', () => cry.play());
+          imgElement.addEventListener("click", () => cry.play());
         }
 
         const modal = new bootstrap.Modal(

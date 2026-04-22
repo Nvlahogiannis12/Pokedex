@@ -538,7 +538,7 @@ input:checked+.slider:before {
 
 .dataNameImgContainer {
   height: 250px !important;
-  width: 95% !important;
+  width: 90% !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -546,7 +546,8 @@ input:checked+.slider:before {
   border-radius: 10px;
   margin: 0 auto;
 }
-.dataNameImg{
+
+.dataNameImg {
   width: auto !important;
   height: 100% !important;
   object-fit: contain !important;
@@ -558,22 +559,50 @@ input:checked+.slider:before {
   width: 50%;
   height: auto;
 }
+
 .modal-content {
   background-color: var(--backgroundTan);
   border: solid 8px;
   border-radius: 10px;
-  border-color: var(--ComplimentBorder);  
+  border-color: var(--ComplimentBorder);
+  text-align: center;
+}
+
+.modal-body {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-footer {
+  justify-content: center;
 }
 
 .modal-header {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   position: relative;
+  border-bottom: solid var(--ComplimentBorder) 3px;
+  padding:5px;
 }
 
 .modal-title {
-  flex-basis: 100%;
+  width: 100%;
+  text-align: center;
+}
+
+.pokemonCategory {
+  font-family: "Saira", sans-serif;
+  font-weight: 700;
+  color: rgb(28, 48, 48);
+  margin-bottom: 5px;
+  width: 100%;
+  text-align: center;
+  font-size: 15px;
 }
 
 .btn-close {
@@ -586,86 +615,129 @@ input:checked+.slider:before {
   display: flex;
   gap: 10px;
   justify-content: center;
-  margin-top: 5px;
+  margin-top: 2px;
 }
 
 .typeContainer p {
   font-family: "Saira", sans-serif;
-  border:solid white 4px;
+  border: solid white 4px;
   border-radius: 8px;
   font-weight: 700;
   text-transform: capitalize;
 }
 
-.normal{
-  color: White;
-  background-color:rgb(168,167,122);
+.btn-modalclose{
+  font-family: "Saira", sans-serif;
+  font-weight: 700;
+  background: linear-gradient(#dc6601, #f1b04c);
+  color: whitesmoke;
+  filter: drop-shadow(1px 1px 2px black);
+  border: none;
+  border-radius: 5px;
+  font-size: 20px;
+  margin-bottom: 10px;
 }
-.fire{
-  color: White;
-  background-color:rgb(238,129,48);
+.formsSection{
+  max-height: 250px !important;
+  overflow: scroll !important;
 }
-.water{
-  color: White;
-  background-color:rgb(99,144,240);
-}
-.electric{
+
+.normal,
+.fire,
+.water,
+.electric,
+.grass,
+.ice,
+.fighting,
+.poison,
+.ground,
+.flying,
+.psychic,
+.bug,
+.rock,
+.ghost,
+.dark,
+.dragon,
+.steel,
+.fairy {
   color: white;
-  background-color:rgb(247, 208, 44);
+  text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+  outline: 1px solid black;
+  width:70px;
 }
-.grass{
-  color: White;
-  background-color:rgb(122, 199, 76);
+
+.normal {
+  background-color: rgb(168, 167, 122);
 }
-.ice{
-  color: white;
-  background-color:rgb(150, 217, 214);
+
+.fire {
+  background-color: rgb(238, 129, 48);
 }
-.fighting{
-  color: White;
-  background-color:rgb(194, 46, 40);
+
+.water {
+  background-color: rgb(99, 144, 240);
 }
-.poison{
-  color: White;
-  background-color:rgb(163, 62, 161);
+
+.electric {
+  background-color: rgb(247, 208, 44);
 }
-.ground{
-  color: White;
-  background-color:rgb(226, 191, 101);
+
+.grass {
+  background-color: rgb(122, 199, 76);
 }
-.flying{
-  color: White;
-  background-color:rgb(169, 143, 243);
+
+.ice {
+  background-color: rgb(150, 217, 214);
 }
-.psychic{
-  color: White;
-  background-color:rgb(249, 85, 135);
+
+.fighting {
+  background-color: rgb(194, 46, 40);
 }
-.bug{
-  color: White;
-  background-color:rgb(166, 185, 26);
+
+.poison {
+  background-color: rgb(163, 62, 161);
 }
-.rock{
-  color: White;
-  background-color:rgb(182, 161, 54);
+
+.ground {
+  background-color: rgb(226, 191, 101);
 }
-.ghost{
-  color: White;
-  background-color:rgb(115, 87, 151);
+
+.flying {
+  background-color: rgb(169, 143, 243);
 }
-.dark{
-  color: White;
-  background-color:rgb(112, 87, 70);
+
+.psychic {
+  background-color: rgb(249, 85, 135);
 }
-.dragon{
-  color: White;
-  background-color:rgb(111, 53, 252);
+
+.bug {
+  background-color: rgb(166, 185, 26);
 }
-.steel{
-  color: White;
-  background-color:rgb(183, 183, 206);
+
+.rock {
+  background-color: rgb(182, 161, 54);
 }
-.fairy{
-  color: White;
-  background-color:rgb(214, 133, 173);
+
+.ghost {
+  background-color: rgb(115, 87, 151);
+}
+
+.dark {
+  background-color: rgb(112, 87, 70);
+}
+
+.dragon {
+  background-color: rgb(111, 53, 252);
+}
+
+.steel {
+  background-color: rgb(183, 183, 206);
+}
+
+.fairy {
+  background-color: rgb(214, 133, 173);
 }

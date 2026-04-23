@@ -10,6 +10,15 @@ let formData = [];
 const shine = new Audio("audio/Shiny.mp3");
 const newShine = new Audio("audio/New_Shiny.mp3");
 
+// Function to clean PokeAPI flavor text
+function cleanFlavorText(text) {
+  return text
+    .replace(/\f/g, " ") // Replace form feed with space
+    .replace(/\n/g, " ") // Replace newlines with space
+    .replace(/\s+/g, " ") // Collapse multiple spaces into one
+    .trim(); // Remove leading/trailing whitespace
+}
+
 // Store regions globally
 let regionsData = [];
 
@@ -453,54 +462,74 @@ function mapGrid(height, width, startNumber, totalCount) {
 
           // alert(displayName);
         }
-        
 
         //Detects Forms and adds them to an array to be displayed in the modal
-let forms = [];
-detectForms(displayName);
+        let forms = [];
+        detectForms(displayName, speciesData);
 
-function detectForms(baseName) {
-  forms = [];
-  
-  forms.push({ 
-    type: "Base Form",
-    name: `${baseName}` ,
-    img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data.id}.png`
-  });
-  // Check for Mega Evolution
-  const megaKey = `Mega ${baseName}`;
-  if (formData.Mega && formData.Mega[megaKey]) {
-    forms.push({
-      type: "Mega Evolution",
-      name: megaKey,
-      img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${formData.Mega[megaKey]}.png`,
-    });
-  }
-  
-  // Check for Gigantamax
-  const gmaxKey = `Gigantamax ${baseName}`;
-  if (formData.Gmax && formData.Gmax[gmaxKey]) {
-    forms.push({
-      type: "Gigantamax",
-      name: gmaxKey,
-      img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${formData.Gmax[gmaxKey]}.png`,
-    });
-  }
-  
-  // Check for misc forms (e.g., regional variants)
-  if (formData.miscForms) {
-    Object.entries(formData.miscForms).forEach(([key, id]) => {
-      if (key.toLowerCase().includes(data.name.toLowerCase())) {
-        forms.push({
-          type: "Special Form",
-          name: key,
-          img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
-        });
-      }
-    });
-  }
-  
-}
+        function detectForms(displayName, speciesData) {
+          forms = [];
+
+          let baseName = displayName;
+          let isMega = false;
+          let isGmax = false;
+
+          if (displayName.startsWith("Mega ")) {
+            isMega = true;
+            baseName = displayName.replace(/^Mega /, "").replace(/ [XYZ]$/, "");
+          } else if (displayName.startsWith("Gigantamax ")) {
+            isGmax = true;
+            baseName = displayName.replace(/^Gigantamax /, "");
+          } else if (displayName.startsWith("Primal ")) {
+            baseName = displayName.replace(/^Primal /, "");
+          }
+
+          // Base form
+          forms.push({
+            type: "Base Form",
+            name: baseName,
+            img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${speciesData.id}.png`,
+          });
+
+          // Check for Mega Evolutions
+          if (formData.Mega) {
+            Object.entries(formData.Mega).forEach(([key, id]) => {
+              if (key.startsWith(`Mega ${baseName}`)) {
+                forms.push({
+                  type: "Mega Evolution",
+                  name: key,
+                  img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
+                });
+              }
+            });
+          }
+
+          // Check for Gigantamax
+          if (formData.Gmax) {
+            Object.entries(formData.Gmax).forEach(([key, id]) => {
+              if (key.startsWith(`Gigantamax ${baseName}`)) {
+                forms.push({
+                  type: "Gigantamax",
+                  name: key,
+                  img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${formData.Gmax[key]}.png`,
+                });
+              }
+            });
+          }
+
+          // Check for misc forms (e.g., regional variants)
+          if (formData.miscForms) {
+            Object.entries(formData.miscForms).forEach(([key, id]) => {
+              if (key.toLowerCase().includes(baseName.toLowerCase())) {
+                forms.push({
+                  type: "Special Form",
+                  name: key,
+                  img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
+                });
+              }
+            });
+          }
+        }
 
         const categoryObj = speciesData.genera.find(
           (item) => item.language.name === "en",
@@ -535,27 +564,36 @@ function detectForms(baseName) {
       >
     </div>
     
-    ${forms.length > 0 ? `
-      <div id="formsSection" class="${forms.length === 1 ? 'd-none' : ''} formsSection">
+    ${
+      forms.length > 0
+        ? `
+      <div id="formsSection" class="${forms.length === 1 ? "d-none" : ""} formsSection">
         <div class="formsContainer">
-          ${forms.map(form => `
+          ${forms
+            .map(
+              (form) => `
             <div style="text-align: center;">
-              <img src="${form.img}" alt="${form.name}" style="width: 65px; height: 65px; object-fit: contain;" onerror="this.style.display='none'">
+              <img src="${form.img}" alt="${form.name}" style="width: 65px; height: 65px; object-fit: contain;" onerror="this.style.display='none'" onclick="updateModalInfo()('${form.name}', '${form.img}')">
               <p style="font-size: 12px; margin: 5px 0;">${form.name}</p>
             </div>
-          `).join('')}
+          `,
+            )
+            .join("")}
         </div>
       </div>
-    ` : ''}
+    `
+        : ""
+    }
   </div>
-
+  <div class="pokedexEntry">
+    <p style="line-height: 1.6;">${cleanFlavorText(speciesData.flavor_text_entries.find((entry) => entry.language.name === "en").flavor_text)}</p>
+  </div>
   <div class="modal-footer">
     <button type="button" class="btn-modalclose" data-bs-dismiss="modal">
       Close
     </button>
   </div>
 </div>`;
-
 
         // Add click event listener for the image to play cry
         const imgElement = document.querySelector(".dataNameImg");

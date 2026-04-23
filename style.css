@@ -514,13 +514,13 @@ input:checked+.slider:before {
 
 ::-webkit-scrollbar-track {
   background: var(--backgroundTan);
-  border-radius: 10px;
+  /* border-radius: 10px; */
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--ComplimentBorder);
   border-radius: 10px;
-  border: 1px solid whitesmoke;
+  /* border: 1px solid whitesmoke; */
   /* Creates a padding effect around the thumb */
 }
 
@@ -557,7 +557,10 @@ input:checked+.slider:before {
 
 .modal-dialog {
   width: 50%;
+  min-width: 500px;
   height: auto;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .modal-content {
@@ -587,7 +590,7 @@ input:checked+.slider:before {
   text-align: center;
   position: relative;
   border-bottom: solid var(--ComplimentBorder) 3px;
-  padding:5px;
+  padding: 5px;
 }
 
 .modal-title {
@@ -626,7 +629,7 @@ input:checked+.slider:before {
   text-transform: capitalize;
 }
 
-.btn-modalclose{
+.btn-modalclose {
   font-family: "Saira", sans-serif;
   font-weight: 700;
   background: linear-gradient(#dc6601, #f1b04c);
@@ -637,9 +640,11 @@ input:checked+.slider:before {
   font-size: 20px;
   margin-bottom: 10px;
 }
-.formsSection{
+
+.formsSection {
   max-height: 250px !important;
-  overflow: scroll !important;
+  overflow-y: scroll !important;
+  overflow-x: hidden !important;
 }
 
 .normal,
@@ -667,7 +672,7 @@ input:checked+.slider:before {
     -1px 1px 0 #000,
     1px 1px 0 #000;
   outline: 1px solid black;
-  width:70px;
+  width: 70px;
 }
 
 .normal {

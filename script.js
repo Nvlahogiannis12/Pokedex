@@ -7,6 +7,7 @@ let GigantamaxGraph = false;
 let megaList = [];
 let gigantamaxList = [];
 let formData = [];
+let currentCry = null;
 const shine = new Audio("audio/Shiny.mp3");
 const newShine = new Audio("audio/New_Shiny.mp3");
 
@@ -350,6 +351,7 @@ function mapGrid(height, width, startNumber, totalCount) {
 
         const cry = new Audio(data.cries.latest);
         cry.play();
+        currentCry = cry;
 
         if (shinyToggle && highClassFilter)
           setTimeout(() => newShine.play(), 1500);
@@ -422,6 +424,28 @@ function mapGrid(height, width, startNumber, totalCount) {
             return;
           }
 
+          if (name.includes("-alolan")) {
+            let base = name.replace("-alolan", "");
+            let baseDisplay = displayNameMap[base] || base.charAt(0).toUpperCase() + base.slice(1);
+            displayName = "Alolan " + baseDisplay;
+            return;
+          } else if (name.includes("-galarian")) {
+            let base = name.replace("-galarian", "");
+            let baseDisplay = displayNameMap[base] || base.charAt(0).toUpperCase() + base.slice(1);
+            displayName = "Galarian " + baseDisplay;
+            return;
+          } else if (name.includes("-hisui")) {
+            let base = name.replace("-hisui", "");
+            let baseDisplay = displayNameMap[base] || base.charAt(0).toUpperCase() + base.slice(1);
+            displayName = "Hisuian " + baseDisplay;
+            return;
+          } else if (name.includes("-paldea")) {
+            let base = name.replace("-paldea", "");
+            let baseDisplay = displayNameMap[base] || base.charAt(0).toUpperCase() + base.slice(1);
+            displayName = "Paldean " + baseDisplay;
+            return;
+          }
+
           if (name.includes("gmax")) {
             name = name.replace("-gmax", "");
             displayName =
@@ -465,9 +489,9 @@ function mapGrid(height, width, startNumber, totalCount) {
 
         //Detects Forms and adds them to an array to be displayed in the modal
         let forms = [];
-        detectForms(displayName, speciesData);
+        await detectForms(displayName, speciesData);
 
-        function detectForms(displayName, speciesData) {
+        async function detectForms(displayName, speciesData) {
           forms = [];
 
           let baseName = displayName;
@@ -515,6 +539,25 @@ function mapGrid(height, width, startNumber, totalCount) {
                 });
               }
             });
+          }
+
+          // Check for regional forms
+          for (const variety of speciesData.varieties.slice(1)) {
+            if (variety.pokemon.name.includes('-alolan') || variety.pokemon.name.includes('-galarian') || variety.pokemon.name.includes('-hisui') || variety.pokemon.name.includes('-paldea')) {
+              try {
+                const pokeResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${variety.pokemon.name}`);
+                const pokeData = await pokeResponse.json();
+                const img = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokeData.id}.png`;
+                let formName = formatDisplayName(variety.pokemon.name);
+                forms.push({
+                  type: "Regional Form",
+                  name: formName,
+                  img: img
+                });
+              } catch (error) {
+                console.error('Error fetching variety:', error);
+              }
+            }
           }
 
           // Check for misc forms (e.g., regional variants)
@@ -573,7 +616,7 @@ function mapGrid(height, width, startNumber, totalCount) {
             .map(
               (form) => `
             <div style="text-align: center;">
-              <img src="${form.img}" alt="${form.name}" style="width: 65px; height: 65px; object-fit: contain;" onerror="this.style.display='none'" onclick="updateModalInfo()('${form.name}', '${form.img}')">
+              <img src="${form.img}" alt="${form.name}" style="width: 65px; height: 65px; object-fit: contain;" onerror="this.style.display='none'" onclick="updateModalInfo('${form.name.replace(/'/g, "\\'")}', '${form.img}')">
               <p style="font-size: 12px; margin: 5px 0;">${form.name}</p>
             </div>
           `,
@@ -598,7 +641,7 @@ function mapGrid(height, width, startNumber, totalCount) {
         // Add click event listener for the image to play cry
         const imgElement = document.querySelector(".dataNameImg");
         if (imgElement) {
-          imgElement.addEventListener("click", () => cry.play());
+          imgElement.addEventListener("click", () => currentCry.play());
         }
 
         const modal = new bootstrap.Modal(
@@ -670,6 +713,110 @@ function SpecialEvo(evoType) {
     calcCells(gigantamaxList.length, 0);
   }
 }
+
+async function updateModalInfo(formName, formImg) {
+  // Extract the Pokemon ID from the image URL
+  const idMatch = formImg.match(/\/official-artwork\/(\d+)\.png$/);
+  if (!idMatch) return;
+  const pokeID = parseInt(idMatch[1]);
+
+  try {
+    const response = await fetch(
+      `https://pokeapi.co/api/v2/pokemon/${pokeID}/`,
+    );
+    const data = await response.json();
+
+    const newCry = new Audio(data.cries.latest);
+    currentCry = newCry;
+
+    // IMPORTANT FIX:
+    // Use the real API form name for animated sprites instead of trimming
+    // it back to the base form. This prevents Mega / Regional / Gmax forms
+    // from reverting to the base sprite.
+    let spriteName = data.name;
+
+    // Special Pokemon Showdown naming fixes only
+    if (spriteName.includes("-mega-y")) {
+      spriteName = spriteName.replace("-mega-y", "-megay");
+    }
+    if (spriteName.includes("-mega-x")) {
+      spriteName = spriteName.replace("-mega-x", "-megax");
+    }
+    if (spriteName.includes("-mega-z")) {
+      spriteName = spriteName.replace("-mega-z", "-megaz");
+    }
+
+    // Determine the display image (animated 3D model)
+    let displayImg;
+    let fallbackImg = formImg;
+
+    if (shinyToggle) {
+      displayImg = `https://play.pokemonshowdown.com/sprites/ani-shiny/${spriteName}.gif`;
+
+      if (!fallbackImg.includes("shiny")) {
+        fallbackImg = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${pokeID}.png`;
+      }
+    } else {
+      displayImg = `https://play.pokemonshowdown.com/sprites/ani/${spriteName}.gif`;
+    }
+
+    // Update the image
+    const imgElement = document.querySelector(".dataNameImg");
+    if (imgElement) {
+      imgElement.src = displayImg;
+      imgElement.onerror = function () {
+        this.src = fallbackImg;
+      };
+
+      // Keep cry replay on image click
+      imgElement.onclick = () => currentCry.play();
+    }
+
+    // Fetch species data
+    const speciesResponse = await fetch(data.species.url);
+    const speciesData = await speciesResponse.json();
+
+    // Update the Pokedex entry
+    const entryElement = document.querySelector(".pokedexEntry p");
+    if (entryElement) {
+      const englishEntry = speciesData.flavor_text_entries.find(
+        (entry) => entry.language.name === "en",
+      );
+
+      if (englishEntry) {
+        entryElement.textContent = cleanFlavorText(
+          englishEntry.flavor_text,
+        );
+      }
+    }
+
+    // Update the display name
+    const nameElement = document.querySelector(".modal-title");
+    if (nameElement) {
+      nameElement.textContent = formName;
+    }
+
+    // Update types
+    const typeContainer = document.querySelector(".typeContainer");
+    if (typeContainer) {
+      typeContainer.innerHTML = data.types
+        .map(
+          (typeInfo) =>
+            `<p class="${typeInfo.type.name}">${typeInfo.type.name}</p>`,
+        )
+        .join("");
+    }
+
+    if (shinyToggle && highClassFilter) {
+      setTimeout(() => newShine.play(), 1500);
+    } else if (shinyToggle) {
+      setTimeout(() => shine.play(), 1500);
+    }
+  } catch (error) {
+    console.error("Error updating modal info:", error);
+  }
+}
+
 
 //Back To Top
 document.addEventListener("DOMContentLoaded", function () {

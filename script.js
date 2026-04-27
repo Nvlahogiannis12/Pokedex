@@ -726,8 +726,26 @@ async function updateModalInfo(formName, formImg) {
     );
     const data = await response.json();
 
-    const newCry = new Audio(data.cries.latest);
-    currentCry = newCry;
+    // Try to use the form's cry first, fallback to base form cry if missing
+let cryUrl = data.cries?.latest;
+
+// If no cry exists for the form, fetch the base species default cry
+if (!cryUrl) {
+  try {
+    const baseResponse = await fetch(
+      `https://pokeapi.co/api/v2/pokemon/${speciesData.id}/`
+    );
+    const baseData = await baseResponse.json();
+    cryUrl = baseData.cries?.latest;
+  } catch (error) {
+    console.error("Error loading fallback cry:", error);
+  }
+}
+
+// Final fallback safety
+if (cryUrl) {
+  currentCry = new Audio(cryUrl);
+}
 
     // IMPORTANT FIX:
     // Use the real API form name for animated sprites instead of trimming
@@ -760,17 +778,32 @@ async function updateModalInfo(formName, formImg) {
       displayImg = `https://play.pokemonshowdown.com/sprites/ani/${spriteName}.gif`;
     }
 
-    // Update the image
-    const imgElement = document.querySelector(".dataNameImg");
-    if (imgElement) {
-      imgElement.src = displayImg;
-      imgElement.onerror = function () {
-        this.src = fallbackImg;
+  // Update the image
+const imgElement = document.querySelector(".dataNameImg");
+
+if (imgElement) {
+  // Clear old image first
+  imgElement.src = "";
+  imgElement.onload = null;
+  imgElement.onerror = null;
+
+  setTimeout(() => {
+    imgElement.src = displayImg + "?t=" + Date.now();
+
+    // First fallback: official artwork
+    imgElement.onerror = function () {
+      this.onerror = function () {
+        // Final fallback: blank Pokéball
+        this.src = "imgs/TransparentPokeball.png";
       };
 
-      // Keep cry replay on image click
-      imgElement.onclick = () => currentCry.play();
-    }
+      this.src = fallbackImg;
+    };
+  }, 50);
+
+  // Keep cry replay on image click
+  imgElement.onclick = () => currentCry.play();
+}
 
     // Fetch species data
     const speciesResponse = await fetch(data.species.url);

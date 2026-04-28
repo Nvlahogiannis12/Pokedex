@@ -335,6 +335,18 @@ function mapGrid(height, width, startNumber, totalCount) {
             return name;
           }
 
+          if (name === "mr-mime" || name === "mr-rime" || name === "mime-jr") {
+            return name;
+          }
+
+          if (safeNames.includes(name)) {
+            return name.replace(/-/g, "");
+          }
+
+          if (name.includes("-")) {
+            return name.substring(0, name.indexOf("-"));
+          }
+
           // 2. safeNames rule (remove hyphen entirely)
           if (safeNames.includes(name)) {
             return name.replace(/-/g, "");
@@ -426,22 +438,30 @@ function mapGrid(height, width, startNumber, totalCount) {
 
           if (name.includes("-alolan")) {
             let base = name.replace("-alolan", "");
-            let baseDisplay = displayNameMap[base] || base.charAt(0).toUpperCase() + base.slice(1);
+            let baseDisplay =
+              displayNameMap[base] ||
+              base.charAt(0).toUpperCase() + base.slice(1);
             displayName = "Alolan " + baseDisplay;
             return;
           } else if (name.includes("-galarian")) {
             let base = name.replace("-galarian", "");
-            let baseDisplay = displayNameMap[base] || base.charAt(0).toUpperCase() + base.slice(1);
+            let baseDisplay =
+              displayNameMap[base] ||
+              base.charAt(0).toUpperCase() + base.slice(1);
             displayName = "Galarian " + baseDisplay;
             return;
-          } else if (name.includes("-hisui")) {
-            let base = name.replace("-hisui", "");
-            let baseDisplay = displayNameMap[base] || base.charAt(0).toUpperCase() + base.slice(1);
+          } else if (name.includes("-hisuian")) {
+            let base = name.replace("-hisuian", "");
+            let baseDisplay =
+              displayNameMap[base] ||
+              base.charAt(0).toUpperCase() + base.slice(1);
             displayName = "Hisuian " + baseDisplay;
             return;
           } else if (name.includes("-paldea")) {
             let base = name.replace("-paldea", "");
-            let baseDisplay = displayNameMap[base] || base.charAt(0).toUpperCase() + base.slice(1);
+            let baseDisplay =
+              displayNameMap[base] ||
+              base.charAt(0).toUpperCase() + base.slice(1);
             displayName = "Paldean " + baseDisplay;
             return;
           }
@@ -528,6 +548,30 @@ function mapGrid(height, width, startNumber, totalCount) {
             });
           }
 
+          if (formData.Primal) {
+            Object.entries(formData.Primal).forEach(([key, id]) => {
+              if (key.startsWith(`Primal ${baseName}`)) {
+                forms.push({
+                  type: "Primal Reversion",
+                  name: key,
+                  img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
+                });
+              }
+            });
+          }
+
+          if (formData.Eternamax) {
+            Object.entries(formData.Eternamax).forEach(([key, id]) => {
+              if (key.startsWith(`Eternamax ${baseName}`)) {
+                forms.push({
+                  type: "Eternamax",
+                  name: key,
+                  img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
+                });
+              }
+            });
+          }
+
           // Check for Gigantamax
           if (formData.Gmax) {
             Object.entries(formData.Gmax).forEach(([key, id]) => {
@@ -543,19 +587,26 @@ function mapGrid(height, width, startNumber, totalCount) {
 
           // Check for regional forms
           for (const variety of speciesData.varieties.slice(1)) {
-            if (variety.pokemon.name.includes('-alolan') || variety.pokemon.name.includes('-galarian') || variety.pokemon.name.includes('-hisui') || variety.pokemon.name.includes('-paldea')) {
+            if (
+              variety.pokemon.name.includes("-alolan") ||
+              variety.pokemon.name.includes("-galarian") ||
+              variety.pokemon.name.includes("-hisuian") ||
+              variety.pokemon.name.includes("-paldean")
+            ) {
               try {
-                const pokeResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${variety.pokemon.name}`);
+                const pokeResponse = await fetch(
+                  `https://pokeapi.co/api/v2/pokemon/${variety.pokemon.name}`,
+                );
                 const pokeData = await pokeResponse.json();
                 const img = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokeData.id}.png`;
                 let formName = formatDisplayName(variety.pokemon.name);
                 forms.push({
                   type: "Regional Form",
                   name: formName,
-                  img: img
+                  img: img,
                 });
               } catch (error) {
-                console.error('Error fetching variety:', error);
+                console.error("Error fetching variety:", error);
               }
             }
           }
@@ -580,6 +631,13 @@ function mapGrid(height, width, startNumber, totalCount) {
         const category = categoryObj ? categoryObj.genus : "Unknown";
 
         // Modal Display
+        const displayText = CSS.escape(
+          cleanFlavorText(
+            speciesData.flavor_text_entries.find(
+              (entry) => entry.language.name === "en",
+            ).flavor_text,
+          ),
+        );
         document.getElementById("modal").innerHTML = `
 <div class="modal-content">
   <div class="modal-header">
@@ -628,9 +686,12 @@ function mapGrid(height, width, startNumber, totalCount) {
         : ""
     }
   </div>
-  <div class="pokedexEntry">
+  <div class="pokedexEntry col-6">
     <p style="line-height: 1.6;">${cleanFlavorText(speciesData.flavor_text_entries.find((entry) => entry.language.name === "en").flavor_text)}</p>
+    <button id="EntryRead" onclick="readDexEntry('${displayText}','${displayName}', '${category}')"><img class="img-fluid" src="imgs/Speaker_Icon.png" alt="Read Entry"></button>
+    
   </div>
+  
   <div class="modal-footer">
     <button type="button" class="btn-modalclose" data-bs-dismiss="modal">
       Close
@@ -643,7 +704,6 @@ function mapGrid(height, width, startNumber, totalCount) {
         if (imgElement) {
           imgElement.addEventListener("click", () => currentCry.play());
         }
-
         const modal = new bootstrap.Modal(
           document.getElementById("exampleModal"),
         );
@@ -683,6 +743,76 @@ function mapGrid(height, width, startNumber, totalCount) {
       tile.appendChild(img);
     }
     if (createdCount >= totalCount) break;
+  }
+}
+
+function sanitizeSpeechText(text) {
+  return String(text)
+    .replace(/\f/g, " ")
+    .replace(/\n/g, " ")
+    .replace(/\r/g, " ")
+    .replace(/[♀♂]/g, "")
+    .replace(/["'"]/g, "")
+    .replace(/[^a-zA-Z0-9.,!?()\- ]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+let lastDexEntry = "";
+let lastDexTime = 0;
+const dexCooldown = 3000; // 3 seconds
+
+function readDexEntry(entry, name, category) {
+  if (!entry) return;
+
+  let reEntry = `${name}, the ${category}. ${entry}`;
+
+  const now = Date.now();
+  const cleanEntry = sanitizeSpeechText(reEntry);
+  console.log(cleanEntry);
+  // Prevent spam clicking same entry
+  if (cleanEntry === lastDexEntry && now - lastDexTime < dexCooldown) {
+    return;
+  }
+
+  lastDexEntry = cleanEntry;
+  lastDexTime = now;
+
+  // Stop current speech immediately
+  window.speechSynthesis.cancel();
+
+  function speakNow() {
+    const voices = window.speechSynthesis.getVoices();
+
+    const dexVoice =
+      voices.find(
+        (v) =>
+          v.name.toLowerCase().includes("david") ||
+          v.name.toLowerCase().includes("alex") ||
+          v.name.toLowerCase().includes("male"),
+      ) || voices[0];
+
+    const utter = new SpeechSynthesisUtterance(cleanEntry);
+
+    if (dexVoice) {
+      utter.voice = dexVoice;
+    }
+
+    utter.pitch = 0.585;
+    utter.rate = 1.2;
+    utter.volume = 1;
+
+    window.speechSynthesis.speak(utter);
+  }
+
+  // FIX: voices often aren't loaded instantly on first click
+  if (window.speechSynthesis.getVoices().length === 0) {
+    window.speechSynthesis.onvoiceschanged = () => {
+      speakNow();
+      window.speechSynthesis.onvoiceschanged = null;
+    };
+  } else {
+    speakNow();
   }
 }
 
@@ -727,25 +857,25 @@ async function updateModalInfo(formName, formImg) {
     const data = await response.json();
 
     // Try to use the form's cry first, fallback to base form cry if missing
-let cryUrl = data.cries?.latest;
+    let cryUrl = data.cries?.latest;
 
-// If no cry exists for the form, fetch the base species default cry
-if (!cryUrl) {
-  try {
-    const baseResponse = await fetch(
-      `https://pokeapi.co/api/v2/pokemon/${speciesData.id}/`
-    );
-    const baseData = await baseResponse.json();
-    cryUrl = baseData.cries?.latest;
-  } catch (error) {
-    console.error("Error loading fallback cry:", error);
-  }
-}
+    // If no cry exists for the form, fetch the base species default cry
+    if (!cryUrl) {
+      try {
+        const baseResponse = await fetch(
+          `https://pokeapi.co/api/v2/pokemon/${speciesData.id}/`,
+        );
+        const baseData = await baseResponse.json();
+        cryUrl = baseData.cries?.latest;
+      } catch (error) {
+        console.error("Error loading fallback cry:", error);
+      }
+    }
 
-// Final fallback safety
-if (cryUrl) {
-  currentCry = new Audio(cryUrl);
-}
+    // Final fallback safety
+    if (cryUrl) {
+      currentCry = new Audio(cryUrl);
+    }
 
     // IMPORTANT FIX:
     // Use the real API form name for animated sprites instead of trimming
@@ -778,32 +908,32 @@ if (cryUrl) {
       displayImg = `https://play.pokemonshowdown.com/sprites/ani/${spriteName}.gif`;
     }
 
-  // Update the image
-const imgElement = document.querySelector(".dataNameImg");
+    // Update the image
+    const imgElement = document.querySelector(".dataNameImg");
 
-if (imgElement) {
-  // Clear old image first
-  imgElement.src = "";
-  imgElement.onload = null;
-  imgElement.onerror = null;
+    if (imgElement) {
+      // Clear old image first
+      imgElement.src = "";
+      imgElement.onload = null;
+      imgElement.onerror = null;
 
-  setTimeout(() => {
-    imgElement.src = displayImg + "?t=" + Date.now();
+      setTimeout(() => {
+        imgElement.src = displayImg + "?t=" + Date.now();
 
-    // First fallback: official artwork
-    imgElement.onerror = function () {
-      this.onerror = function () {
-        // Final fallback: blank Pokéball
-        this.src = "imgs/TransparentPokeball.png";
-      };
+        // First fallback: official artwork
+        imgElement.onerror = function () {
+          this.onerror = function () {
+            // Final fallback: blank Pokéball
+            this.src = "imgs/TransparentPokeball.png";
+          };
 
-      this.src = fallbackImg;
-    };
-  }, 50);
+          this.src = fallbackImg;
+        };
+      }, 50);
 
-  // Keep cry replay on image click
-  imgElement.onclick = () => currentCry.play();
-}
+      // Keep cry replay on image click
+      imgElement.onclick = () => currentCry.play();
+    }
 
     // Fetch species data
     const speciesResponse = await fetch(data.species.url);
@@ -817,9 +947,7 @@ if (imgElement) {
       );
 
       if (englishEntry) {
-        entryElement.textContent = cleanFlavorText(
-          englishEntry.flavor_text,
-        );
+        entryElement.textContent = cleanFlavorText(englishEntry.flavor_text);
       }
     }
 
@@ -849,7 +977,6 @@ if (imgElement) {
     console.error("Error updating modal info:", error);
   }
 }
-
 
 //Back To Top
 document.addEventListener("DOMContentLoaded", function () {

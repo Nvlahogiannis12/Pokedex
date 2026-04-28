@@ -2,7 +2,6 @@ Unreleased Versions
 ___________________________________________________________________________________________________________
 - Where to find every pokemon (Dex Nav Equivalent)
 - Evolutions and Requirements for Evolution
-- Added talking Pokedex
 
 Official Release
 ___________________________________________________________________________________________________________
@@ -10,10 +9,11 @@ v1.5 2026
 - Fixed several naming issues in altForms.json involving Cramorant & Pikachu
 - Changed Scroll Bar & Colors
 - Fixed Bug where Cries don't play
-- Added Moving Sprites when clicked
+- Added 3d renderings when clicked
 - Added Alternate Forms
 - Added More info on each pokemon
 - Fixed a bug where cries can overlap
+- Added talking Pokedex
 
 V1.4 2026-04-13
 - Fixed Bug where some pokemon cries don't play

@@ -746,3 +746,11 @@ input:checked+.slider:before {
 .fairy {
   background-color: rgb(214, 133, 173);
 }
+
+#EntryRead {
+  background: transparent;
+  border: none;
+  padding: 0;
+  width:20px;
+  height:20px;
+}

@@ -14,6 +14,7 @@ v1.5 2026
 - Added More info on each pokemon
 - Fixed a bug where cries can overlap
 - Added talking Pokedex
+- Centered the First Pokedex Screen
 
 V1.4 2026-04-13
 - Fixed Bug where some pokemon cries don't play

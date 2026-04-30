@@ -55,6 +55,7 @@ function fetching() {
         button.textContent = item.name;
 
         button.addEventListener("click", () => {
+          document.getElementById("removeCenterDown").classList.remove("centerDown");
           window.scrollTo({ top: 0, behavior: "smooth" });
           clickGeneration(index, item, "Normal");
         });
@@ -686,12 +687,15 @@ function mapGrid(height, width, startNumber, totalCount) {
         : ""
     }
   </div>
+  <div class="row">
   <div class="pokedexEntry col-6">
-    <p style="line-height: 1.6;">${cleanFlavorText(speciesData.flavor_text_entries.find((entry) => entry.language.name === "en").flavor_text)}</p>
+    <p>${cleanFlavorText(speciesData.flavor_text_entries.find((entry) => entry.language.name === "en").flavor_text)}</p>
     <button id="EntryRead" onclick="readDexEntry('${displayText}','${displayName}', '${category}')"><img class="img-fluid" src="imgs/Speaker_Icon.png" alt="Read Entry"></button>
-    
   </div>
-  
+  <div class="col-6">
+  <p class="howToEvolve">How to Evolve:</p>
+  </div>
+  </div>
   <div class="modal-footer">
     <button type="button" class="btn-modalclose" data-bs-dismiss="modal">
       Close

@@ -765,23 +765,23 @@ ${evolutionChain.length === 0
 
         for (let d of evo.details) {
 
-          if (d.min_level) conditions.push(`Level ${d.min_level}`);
-          if (d.gender == 1) conditions.push(`Female Only`);
-          if (d.gender == 2) conditions.push(`Male Only`);
-          if (d.item) conditions.push(`Use ${d.item.name}`);
-          if (d.min_happiness) conditions.push(`High friendship`);
-          if (d.min_beauty) conditions.push(`High beauty`);
-          if (d.min_affection) conditions.push(`High affection`);
+          if (d.min_level) conditions.push(`Level ${d.min_level}`); //Rare Candy (50) Symbol
+          if (d.gender == 1) conditions.push(`Female Only`); //♀
+          if (d.gender == 2) conditions.push(`Male Only`); //♂
+          if (d.item) conditions.push(`Use ${d.item.name}`); //Sun (80), Moon (81), Fire (82), Thunder (83), Water (84), Leaf (85), Shiny (107), Dusk (108), Dawn (109), Oval (110), Ice (885)
+          if (d.min_happiness) conditions.push(`High friendship`); //Soothe Bell (195)
+          if (d.min_beauty) conditions.push(`High beauty`); //Prism Scale (580)
+          // if (d.min_affection) conditions.push(`High affection`);
           if (d.min_damage_taken) conditions.push(`Take ${d.min_damage_taken} damage`);
           if (d.min_move_count) conditions.push(`Know at least ${d.min_move_count} moves`);
-          if (d.min_steps) conditions.push(`Walk ${d.min_steps} steps`);
+          if (d.min_steps) conditions.push(`Walk ${d.min_steps} steps`); //Roller Skates (742)
           if (d.needs_multiplayer) conditions.push(`Multiplayer`);
           if (d.needs_overworld_rain) conditions.push(`Requires Rain`);
           if (d.party_species) conditions.push(`Have ${d.party_species.name} in party`);
           if (d.party_type) conditions.push(`Have a ${d.party_type.name}-type Pokémon in party`);
           if (d.region) conditions.push(`In ${d.region.name}`);
           if (d.relative_physical_stats) conditions.push(`Relative Physical Stats: ${d.relative_physical_stats}`);
-          if (d.held_item) conditions.push(`Hold ${d.held_item.name}`);
+          if (d.held_item) conditions.push(`Hold ${d.held_item.name}`); //Kings Rock (198), Deep Sea Tooth (203), Deep Sea Scale (204), Metal Coat (210), Dragon Scale (212), Upgrade (229), Protector (298), Electirizer (299), Magmarizer (300), Dubious Disc (301), Reaper Cloth (302), Razor Claw (303), Razor Fang (304), Whipped Dream (686), Sachet (687),
           if (d.known_move) conditions.push(`Learn ${d.known_move.name}`);
           if (d.known_move_type) conditions.push(`Know a ${d.known_move_type.name}-type move`);
           if (d.location) conditions.push(`At ${d.location.name}`);
@@ -789,12 +789,27 @@ ${evolutionChain.length === 0
           if (d.trade_species) conditions.push(`Trade for ${d.trade_species.name}`);
           if (d.turn_upside_down) conditions.push(`Turn console upside down`);
           if (d.used_move) conditions.push(`Use ${d.used_move.name}`);
-        }
+          if (d.trigger && d.trigger.name === "trade") conditions.push(`Trade`);
+          if (d.trigger && d.trigger.name == "three-critical-hits") conditions.push(`Land 3 critical hits in one battle`); //Stick (236)
+          if (d.trigger && d.trigger.name === "shed") {
+             conditions.push(`Evolve with empty slot in party`);
+            }
+//Poke Radar (408), Town Map (419), Coin Case (421), GBA Link Cords? (484), Splicer (671), Shiny Charm (675), Reveal Glass (681), N-Solarizer/N-Lunarizer (989, 990)
+// Mega Stones (695 - 722, 760 - 761, 793 - 805, 808 - 811)
+// Key Stone (814)
+// Prison Bottle (806)
+// Zygarde Cube (884)
 
+}
+        const mySet = new Set(conditions);
+        conditions = Array.from(mySet);
         method = conditions.join(", ");
-      }
 
-      return `${evo.from} → ${evo.to} (${method})`;
+      }
+      let pre_evo = evo.from.charAt(0).toUpperCase() + evo.from.slice(1);
+      let post_evo = evo.to.charAt(0).toUpperCase() + evo.to.slice(1);  
+
+      return `${pre_evo} → ${post_evo} (${method})`;
     }).join("<br>")
 }
   </p>

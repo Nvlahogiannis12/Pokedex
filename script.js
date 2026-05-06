@@ -639,7 +639,44 @@ function mapGrid(height, width, startNumber, totalCount) {
             ).flavor_text,
           ),
         );
-        document.getElementById("modal").innerHTML = `
+
+ async function getEvolutionChain(pokemonName) {
+  // Step 1: Get species
+  const speciesRes = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemonName}`);
+  const speciesData = await speciesRes.json();
+
+  // Step 2: Get evolution chain
+  const evoRes = await fetch(speciesData.evolution_chain.url);
+  const evoData = await evoRes.json();
+
+  // Step 3: Parse chain (FIXED)
+  function parseChain(chain) {
+    let result = [];
+
+    function traverse(node) {
+      node.evolves_to.forEach(evo => {
+        result.push({
+          from: node.species.name,
+          to: evo.species.name,
+          details: evo.evolution_details
+        });
+
+        traverse(evo);
+      });
+    }
+
+    traverse(chain);
+    return result;
+  }
+
+  return parseChain(evoData.chain);
+}
+
+
+// ✅ MAKE SURE THIS WHOLE SECTION IS INSIDE AN ASYNC FUNCTION
+const evolutionChain = await getEvolutionChain(data.name);
+
+document.getElementById("modal").innerHTML = `
 <div class="modal-content">
   <div class="modal-header">
     <h1 class="modal-title fs-5" id="exampleModalLabel">
@@ -693,7 +730,22 @@ function mapGrid(height, width, startNumber, totalCount) {
     <button id="EntryRead" onclick="readDexEntry('${displayText}','${displayName}', '${category}')"><img class="img-fluid" src="imgs/Speaker_Icon.png" alt="Read Entry"></button>
   </div>
   <div class="col-6">
-  <p class="howToEvolve">How to Evolve:</p>
+  <p class="howToEvolve">
+    How to Evolve:<br>
+    ${evolutionChain.map(evo => {
+      let method = "";
+
+      if (evo.details.length > 0) {
+        const d = evo.details[0];
+
+        if (d.min_level) method = `Level ${d.min_level}`;
+        else if (d.item) method = `Use ${d.item.name}`;
+        else if (d.trigger) method = d.trigger.name;
+      }
+
+      return `${evo.from} → ${evo.to} (${method})`;
+    }).join("<br>")}
+  </p>
   </div>
   </div>
   <div class="modal-footer">
@@ -702,7 +754,6 @@ function mapGrid(height, width, startNumber, totalCount) {
     </button>
   </div>
 </div>`;
-
         // Add click event listener for the image to play cry
         const imgElement = document.querySelector(".dataNameImg");
         if (imgElement) {

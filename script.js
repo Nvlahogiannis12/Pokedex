@@ -755,41 +755,43 @@ document.getElementById("modal").innerHTML = `
   <div class="col-6">
   <p class="howToEvolve">
     How to Evolve:<br>
-   ${evolutionChain.length === 0
+${evolutionChain.length === 0
   ? "Does not evolve"
   : evolutionChain.map(evo => {
       let method = "";
 
       if (evo.details.length > 0) {
-        const d = evo.details[0];
-
         let conditions = [];
 
-        if (d.min_level) conditions.push(`Level ${d.min_level}`);
-        if (d.gender) conditions.push(`Gender: ${d.gender}`);
-        if (d.item) conditions.push(`Use ${d.item.name}`);
-        if (d.min_happiness) conditions.push(`High friendship`);
-        if (d.min_beauty) conditions.push(`High beauty`);
-        if (d.min_affection) conditions.push(`High affection`);
-        if (d.min_damage_taken) conditions.push(`Take ${d.min_damage_taken} damage`);
-        if (d.min_move_count) conditions.push(`Know at least ${d.min_move_count} moves`);
-        if (d.min_steps) conditions.push(`Walk ${d.min_steps} steps`);
-        if (d.needs_multiplayer) conditions.push(`Multiplayer`);
-        if (d.needs_overworld_rain) conditions.push(`Requires Rain`);
-        if (d.party_species) conditions.push(`Have ${d.party_species.name} in party`);
-        if (d.party_type) conditions.push(`Have a ${d.party_type.name}-type Pokémon in party`);
-        if (d.region) conditions.push(`In ${d.region.name}`);
-        if (d.relative_physical_stats) conditions.push(`Relative Physical Stats: ${d.relative_physical_stats}`);
-        if (d.held_item) conditions.push(`Hold ${d.held_item.name}`);
-        if (d.known_move) conditions.push(`Learn ${d.known_move.name}`);
-        if (d.known_move_type) conditions.push(`Know a ${d.known_move_type.name}-type move`);
-        if (d.location) conditions.push(`At ${d.location.name}`);
-        if (d.time_of_day && d.time_of_day !== "") conditions.push(d.time_of_day);
-        if (d.trade_species) conditions.push(`Trade for ${d.trade_species.name}`);
-        if (d.turn_upside_down) conditions.push(`Turn console upside down`);
-        if (d.used_move) conditions.push(`Use ${d.used_move.name}`);
+        for (let d of evo.details) {
 
-        method = conditions.join(", ") || (d.trigger ? d.trigger.name : "");
+          if (d.min_level) conditions.push(`Level ${d.min_level}`);
+          if (d.gender == 1) conditions.push(`Female Only`);
+          if (d.gender == 2) conditions.push(`Male Only`);
+          if (d.item) conditions.push(`Use ${d.item.name}`);
+          if (d.min_happiness) conditions.push(`High friendship`);
+          if (d.min_beauty) conditions.push(`High beauty`);
+          if (d.min_affection) conditions.push(`High affection`);
+          if (d.min_damage_taken) conditions.push(`Take ${d.min_damage_taken} damage`);
+          if (d.min_move_count) conditions.push(`Know at least ${d.min_move_count} moves`);
+          if (d.min_steps) conditions.push(`Walk ${d.min_steps} steps`);
+          if (d.needs_multiplayer) conditions.push(`Multiplayer`);
+          if (d.needs_overworld_rain) conditions.push(`Requires Rain`);
+          if (d.party_species) conditions.push(`Have ${d.party_species.name} in party`);
+          if (d.party_type) conditions.push(`Have a ${d.party_type.name}-type Pokémon in party`);
+          if (d.region) conditions.push(`In ${d.region.name}`);
+          if (d.relative_physical_stats) conditions.push(`Relative Physical Stats: ${d.relative_physical_stats}`);
+          if (d.held_item) conditions.push(`Hold ${d.held_item.name}`);
+          if (d.known_move) conditions.push(`Learn ${d.known_move.name}`);
+          if (d.known_move_type) conditions.push(`Know a ${d.known_move_type.name}-type move`);
+          if (d.location) conditions.push(`At ${d.location.name}`);
+          if (d.time_of_day && d.time_of_day !== "") conditions.push(d.time_of_day);
+          if (d.trade_species) conditions.push(`Trade for ${d.trade_species.name}`);
+          if (d.turn_upside_down) conditions.push(`Turn console upside down`);
+          if (d.used_move) conditions.push(`Use ${d.used_move.name}`);
+        }
+
+        method = conditions.join(", ");
       }
 
       return `${evo.from} → ${evo.to} (${method})`;

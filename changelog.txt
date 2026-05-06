@@ -1,7 +1,7 @@
 Unreleased Versions
 ___________________________________________________________________________________________________________
 - Where to find every pokemon (Dex Nav Equivalent)
-- Evolutions and Requirements for Evolution
+
 
 Official Release
 ___________________________________________________________________________________________________________
@@ -14,7 +14,8 @@ v1.5 2026
 - Added More info on each pokemon
 - Fixed a bug where cries can overlap
 - Added talking Pokedex
-- Centered the First Pokedex Screen
+- Centered the Home Pokedex Screen
+- Added Evolutions and Requirements for Evolution
 
 V1.4 2026-04-13
 - Fixed Bug where some pokemon cries don't play

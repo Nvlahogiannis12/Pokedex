@@ -21,10 +21,10 @@
 <body class="container-fluid">
     <header class="navbar-header">
         <!-- Menu icon at the top left -->
+         <div id="menuIcon"><img class="openDexIcon" src="imgs/Pokedex_Icon.png"></div>
         <div><img class="settingIcon" src="imgs/Settings.png" onclick="menuToggleFilt()"></div>
-        <div id="menuIcon"><img class="openDexIcon" src="imgs/Pokedex_Icon.png"></div>
         <div id="howToIcon"><img class="howToIcon" src="imgs/HowTo.png" onclick="menuToggleHowTo()"></div>
-        <p class="versionSite">V1.4</p>
+        <p class="versionSite">V1.5</p>
     </header>
     <!-- Sidebar with links -->
     <nav class="sidebar" id="sidebar">
@@ -43,13 +43,13 @@
     <main class="row">
         <div class="container">
             <div class="col-12" id="sprite">
+                <div class="centerDown" id="removeCenterDown">
                 <h1 class="spriteTitle my-2">Pokédex</h1>
                 <div id="instructions">
-                    <p class="instructFadeIn">Press the Pokédex button or settings in the top-left corner to navigate
-                    </p>
                     <button id="openPokedexButton" class="pokedex-button">Open Pokédex</button>
                     <br>
                     <button id="howToButton" class="pokedex-button" onclick="menuToggleHowTo()">How to Use</button>
+                </div>
                 </div>
                 <!--Where Pokedex Generates-->
                 <div id="griding"></div>
@@ -82,6 +82,8 @@
                     <h3>Close</h3>
                 </button>
             </div>
+
+
     </main>
     <button id="backToTopBtn" class="back-to-top-btn" title="Back to Top">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -89,6 +91,9 @@
                 stroke-linejoin="round" />
         </svg>
     </button>
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div id="modal" class="modal-dialog modal-dialog-centered"></div>
+</div>
     <footer>
         <!-- place footer here -->
     </footer>
@@ -102,5 +107,4 @@
         crossorigin="anonymous"></script>
     <script src="script.js"></script>
 </body>
-
 </html>

@@ -7,8 +7,18 @@ let GigantamaxGraph = false;
 let megaList = [];
 let gigantamaxList = [];
 let formData = [];
+let currentCry = null;
 const shine = new Audio("audio/Shiny.mp3");
 const newShine = new Audio("audio/New_Shiny.mp3");
+
+// Function to clean PokeAPI flavor text
+function cleanFlavorText(text) {
+  return text
+    .replace(/\f/g, " ") // Replace form feed with space
+    .replace(/\n/g, " ") // Replace newlines with space
+    .replace(/\s+/g, " ") // Collapse multiple spaces into one
+    .trim(); // Remove leading/trailing whitespace
+}
 
 // Store regions globally
 let regionsData = [];
@@ -17,142 +27,138 @@ fetching();
 
 function fetching() {
   Promise.all([
-    fetch("regions.json").then(res => res.json()),
-    fetch("altForms.json").then(res => res.json())
+    fetch("regions.json").then((res) => res.json()),
+    fetch("altForms.json").then((res) => res.json()),
   ])
-  .then(([regions, altForms]) => {
+    .then(([regions, altForms]) => {
+      regionsData = regions;
+      formData = altForms;
 
-    regionsData = regions;
-    formData = altForms;
+      // Prepare Mega/Gigantamax lists
+      megaList = Object.entries(formData.Mega).map(([name, id]) => ({
+        name,
+        id: Number(id),
+      }));
 
-    // Prepare Mega/Gigantamax lists
-    megaList = Object.entries(formData.Mega).map(([name, id]) => ({
-      name,
-      id: Number(id)
-    }));
+      gigantamaxList = Object.entries(formData.Gmax).map(([name, id]) => ({
+        name,
+        id: Number(id),
+      }));
 
-    gigantamaxList = Object.entries(formData.Gmax).map(([name, id]) => ({
-      name,
-      id: Number(id)
-    }));
+      const container = document.getElementById("list");
+      container.innerHTML = "<h2>Regions</h2>";
 
-    const container = document.getElementById("list");
-    container.innerHTML = "<h2>Regions</h2>";
+      // Region buttons
+      regions.forEach((item, index) => {
+        const button = document.createElement("button");
+        button.classList.add("region-button");
+        button.textContent = item.name;
 
-    // Region buttons
-    regions.forEach((item, index) => {
-      const button = document.createElement("button");
-      button.classList.add("region-button");
-      button.textContent = item.name;
+        button.addEventListener("click", () => {
+          document.getElementById("removeCenterDown").classList.remove("centerDown");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          clickGeneration(index, item, "Normal");
+        });
 
-      button.addEventListener("click", () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        clickGeneration(index, item, "Normal");
+        container.appendChild(button);
       });
 
-      container.appendChild(button);
-    });
+      // Sidebar & overlay logic
+      const menuIcon = document.getElementById("menuIcon");
+      const sidebar = document.getElementById("sidebar");
+      const overlay = document.getElementById("pageOverlay");
+      const openPokedexButton = document.getElementById("openPokedexButton");
+      const howToMenu = document.getElementById("howToMenu");
+      const filterSettings = document.getElementById("filterSettings");
 
-    // Sidebar & overlay logic
-    const menuIcon = document.getElementById("menuIcon");
-    const sidebar = document.getElementById("sidebar");
-    const overlay = document.getElementById("pageOverlay");
-    const openPokedexButton = document.getElementById("openPokedexButton");
-    const howToMenu = document.getElementById("howToMenu");
-    const filterSettings = document.getElementById("filterSettings");
-
-    // Overlay Click (Close Everything)
-overlay.addEventListener("click", () => {
-  setSidebarOpen(false);
-  howToMenu.classList.add("d-none");
-  filterSettings.classList.add("d-none");
-  updateOverlay();
-});
-
-    let isSidebarOpen = false;
-
-    // Sidebar Open / Close
-    function setSidebarOpen(open) {
-      if (open) {
-        sidebar.classList.add("open");
-        overlay.classList.remove("hidden");
-        overlay.classList.add("visible");
-      } else {
-        sidebar.classList.remove("open");
-        overlay.classList.remove("visible");
-        overlay.classList.add("hidden");
-      }
-
-      isSidebarOpen = open;
-    }
-
-    // Menu Icon Click
-    menuIcon.addEventListener("click", () => {
-      filterSettings.classList.add("d-none");
-      howToMenu.classList.add("d-none");
-      setSidebarOpen(!isSidebarOpen);
-    });
-
-    // Overlay Click (Close Everything)
-    overlay.addEventListener("click", () => {
-      setSidebarOpen(false);
-      howToMenu.classList.add("d-none");
-      filterSettings.classList.add("d-none");
-    });
-
-    // Open Pokedex Button
-    if (openPokedexButton) {
-      openPokedexButton.addEventListener("click", () => {
-        setSidebarOpen(true);
+      // Overlay Click (Close Everything)
+      overlay.addEventListener("click", () => {
+        setSidebarOpen(false);
+        howToMenu.classList.add("d-none");
+        filterSettings.classList.add("d-none");
+        updateOverlay();
       });
-    }
 
-    // Filter toggles update current grid (Mega/Gmax or normal)
-    window.toggleFilter = function(filterType) {
-      if (filterType === "Shiny") shinyToggle = !shinyToggle;
-      else if (filterType === "Enhanced") highClassFilter = !highClassFilter;
+      let isSidebarOpen = false;
 
-      // rebuild current grid
-      if (currentRegionStart !== null) {
-        calcCells(currentRegionCount, currentRegionStart);
+      // Sidebar Open / Close
+      function setSidebarOpen(open) {
+        if (open) {
+          sidebar.classList.add("open");
+          overlay.classList.remove("hidden");
+          overlay.classList.add("visible");
+        } else {
+          sidebar.classList.remove("open");
+          overlay.classList.remove("visible");
+          overlay.classList.add("hidden");
+        }
+
+        isSidebarOpen = open;
       }
-      // rebuild Mega/Gmax grid if showing
-      else if (MegaGraph) calcCells(megaList.length, 0);
-      else if (GigantamaxGraph) calcCells(gigantamaxList.length, 0);
-    };
 
-  function updateOverlay() {
-  const isOpen =
-    !filterSettings.classList.contains("d-none") ||
-    !howToMenu.classList.contains("d-none");
+      // Menu Icon Click
+      menuIcon.addEventListener("click", () => {
+        filterSettings.classList.add("d-none");
+        howToMenu.classList.add("d-none");
+        setSidebarOpen(!isSidebarOpen);
+      });
 
-  overlay.classList.toggle("visible", isOpen);
-  overlay.classList.toggle("hidden", !isOpen);
+      // Overlay Click (Close Everything)
+      overlay.addEventListener("click", () => {
+        setSidebarOpen(false);
+        howToMenu.classList.add("d-none");
+        filterSettings.classList.add("d-none");
+      });
+
+      // Open Pokedex Button
+      if (openPokedexButton) {
+        openPokedexButton.addEventListener("click", () => {
+          setSidebarOpen(true);
+        });
+      }
+
+      // Filter toggles update current grid (Mega/Gmax or normal)
+      window.toggleFilter = function (filterType) {
+        if (filterType === "Shiny") shinyToggle = !shinyToggle;
+        else if (filterType === "Enhanced") highClassFilter = !highClassFilter;
+
+        // rebuild current grid
+        if (currentRegionStart !== null) {
+          calcCells(currentRegionCount, currentRegionStart);
+        }
+        // rebuild Mega/Gmax grid if showing
+        else if (MegaGraph) calcCells(megaList.length, 0);
+        else if (GigantamaxGraph) calcCells(gigantamaxList.length, 0);
+      };
+
+      function updateOverlay() {
+        const isOpen =
+          !filterSettings.classList.contains("d-none") ||
+          !howToMenu.classList.contains("d-none");
+
+        overlay.classList.toggle("visible", isOpen);
+        overlay.classList.toggle("hidden", !isOpen);
+      }
+
+      // Filter Menu Toggle
+      window.menuToggleFilt = function () {
+        howToMenu.classList.add("d-none");
+
+        filterSettings.classList.toggle("d-none");
+        setSidebarOpen(false);
+        updateOverlay();
+      };
+
+      window.menuToggleHowTo = function () {
+        filterSettings.classList.add("d-none");
+
+        howToMenu.classList.toggle("d-none");
+        setSidebarOpen(false);
+        updateOverlay();
+      };
+    })
+    .catch((error) => console.error("Error loading JSON:", error));
 }
-
-    // Filter Menu Toggle
-    window.menuToggleFilt = function() {
-  howToMenu.classList.add("d-none");
-
-  filterSettings.classList.toggle("d-none");
- setSidebarOpen(false); 
-  updateOverlay();
-};
-
-window.menuToggleHowTo = function() {
-  filterSettings.classList.add("d-none");
-
-  howToMenu.classList.toggle("d-none");
- setSidebarOpen(false); 
-  updateOverlay();
-};
-
-
-
-  })
-  .catch(error => console.error("Error loading JSON:", error));
-}
-
 
 // Handles clicking Regions / Mega / Gigantamax
 function clickGeneration(index, item, Type) {
@@ -207,8 +213,6 @@ function clickGeneration(index, item, Type) {
   }
 }
 
-
-
 // Generates the new grid height based on number of Pokémon
 function calcCells(regionI, startNumber) {
   const screenWidth = window.innerWidth;
@@ -229,7 +233,6 @@ function calcCells(regionI, startNumber) {
   let newH = Math.ceil(regionI / width);
   mapGrid(newH, width, startNumber, regionI);
 }
-
 
 // Creates the grid
 function mapGrid(height, width, startNumber, totalCount) {
@@ -256,42 +259,656 @@ function mapGrid(height, width, startNumber, totalCount) {
 
       tile.dataset.index = pokeID;
       tile.id = pokeID;
+      tile.setAttribute("data-bs-toggle", "modal");
+      tile.setAttribute("data-bs-target", "#staticBackdrop");
+
       container.appendChild(tile);
 
       createdCount++;
 
       // Pokémon Cries
       tile.addEventListener("click", async () => {
-        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokeID}/`);
+        const response = await fetch(
+          `https://pokeapi.co/api/v2/pokemon/${pokeID}/`,
+        );
         const data = await response.json();
-        
-        let safeNames = ["ho-oh", "porygon-z", "type-null", "jangmo-o", "hakamo-o", "kommo-o", "tapu-koko", "tapu-lele", "tapu-bulu", "tapu-fini", "wo-chien", "chien-pao", "ting-lu", "chi-yu",];
 
-        if (safeNames.includes(data.name)) {
-          data.name = data.name.replace("-", "");
-        } else if (data.name.includes("-")) {
-          data.name = data.name.substring(0, data.name.indexOf('-'));
+        // Get species data for genus/category
+        const speciesResponse = await fetch(data.species.url);
+        const speciesData = await speciesResponse.json();
+
+        let safeNames = [
+          "ho-oh",
+          "porygon-z",
+          "type-null",
+          "jangmo-o",
+          "hakamo-o",
+          "kommo-o",
+          "tapu-koko",
+          "tapu-lele",
+          "tapu-bulu",
+          "tapu-fini",
+          "wo-chien",
+          "chien-pao",
+          "ting-lu",
+          "chi-yu",
+          "great-tusk",
+          "scream-tail",
+          "brute-bonnet",
+          "flutter-mane",
+          "slither-wing",
+          "sandy-shocks",
+          "roaring-moon",
+          "iron-valiant",
+          "iron-treads",
+          "iron-bundle",
+          "iron-hands",
+          "iron-jugulis",
+          "iron-moth",
+          "iron-thorns",
+          "walking-wake",
+          "iron-leaves",
+          "iron-boulder",
+          "iron-crown",
+          "gouging-fire",
+          "raging-bolt",
+        ];
+        function formatName(name) {
+          // 1. Special mega / gmax / primal cases first
+          if (name.includes("-mega-y")) {
+            return name.replace("-mega-y", "-megay");
+          }
+
+          if (name.includes("-mega-x")) {
+            return name.replace("-mega-x", "-megax");
+          }
+
+          if (name.includes("-mega-z")) {
+            return name.replace("-mega-z", "-megaz");
+          }
+
+          if (
+            name.includes("-mega") ||
+            name.includes("-gmax") ||
+            name.includes("-primal") ||
+            name.includes("-eternamax")
+          ) {
+            return name;
+          }
+
+          if (name === "mr-mime" || name === "mr-rime" || name === "mime-jr") {
+            return name;
+          }
+
+          if (safeNames.includes(name)) {
+            return name.replace(/-/g, "");
+          }
+
+          if (name.includes("-")) {
+            return name.substring(0, name.indexOf("-"));
+          }
+
+          // 2. safeNames rule (remove hyphen entirely)
+          if (safeNames.includes(name)) {
+            return name.replace(/-/g, "");
+          }
+
+          // 3. default rule: cut at first hyphen for all other names
+          if (name.includes("-")) {
+            return name.substring(0, name.indexOf("-"));
+          }
+
+          return name;
+        }
+        data.name = formatName(data.name);
+
+        const cry = new Audio(data.cries.latest);
+        cry.play();
+        currentCry = cry;
+
+        if (shinyToggle && highClassFilter)
+          setTimeout(() => newShine.play(), 1500);
+        else if (shinyToggle) setTimeout(() => shine.play(), 1500);
+
+        //name display
+        // Determine filtered image
+        let displayImg;
+        let fallbackImg;
+
+        if (shinyToggle) {
+          displayImg = `https://play.pokemonshowdown.com/sprites/ani-shiny/${data.name}.gif`;
+          fallbackImg = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${data.id}.png`;
+        } else {
+          displayImg = `https://play.pokemonshowdown.com/sprites/ani/${data.name}.gif`;
+          fallbackImg = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data.id}.png`;
         }
 
-        const cry = new Audio(`https://play.pokemonshowdown.com/audio/cries/${data.name}.mp3`);
-        cry.play();
+        let displayName =
+          data.name.charAt(0).toUpperCase() + data.name.slice(1);
+        formatDisplayName(data.name);
 
-        if (shinyToggle && highClassFilter) setTimeout(() => newShine.play(), 1500);
-        else if (shinyToggle) setTimeout(() => shine.play(), 1500);
+        function formatDisplayName(name) {
+          const displayNameMap = {
+            "mr-mime": "Mr. Mime",
+            "mr-rime": "Mr. Rime",
+            "mime-jr": "Mime Jr.",
+            "type-null": "Type: Null",
+            "porygon-z": "Porygon2",
+            "nidoran-m": "Nidoran♂",
+            "nidoran-f": "Nidoran♀",
+            "farfetch-d": "Farfetch'd",
+            "ho-oh": "Ho-Oh",
+            "jangmo-o": "Jangmo-o",
+            "hakamo-o": "Hakamo-o",
+            "kommo-o": "Kommo-o",
+            "tapu-koko": "Tapu Koko",
+            "tapu-lele": "Tapu Lele",
+            "tapu-bulu": "Tapu Bulu",
+            "tapu-fini": "Tapu Fini",
+            "wo-chien": "Wo-Chien",
+            "chien-pao": "Chien-Pao",
+            "ting-lu": "Ting-Lu",
+            "chi-yu": "Chi-Yu",
+            "great-tusk": "Great Tusk",
+            "scream-tail": "Scream Tail",
+            "brute-bonnet": "Brute Bonnet",
+            "flutter-mane": "Flutter Mane",
+            "slither-wing": "Slither Wing",
+            "sandy-shocks": "Sandy Shocks",
+            "roaring-moon": "Roaring Moon",
+            "iron-valiant": "Iron Valiant",
+            "iron-treads": "Iron Treads",
+            "iron-bundle": "Iron Bundle",
+            "iron-hands": "Iron Hands",
+            "iron-jugulis": "Iron Jugulis",
+            "iron-moth": "Iron Moth",
+            "iron-thorns": "Iron Thorns",
+            "walking-wake": "Walking Wake",
+            "iron-leaves": "Iron Leaves",
+            "iron-boulder": "Iron Boulder",
+            "iron-crown": "Iron Crown",
+            "gouging-fire": "Gouging Fire",
+            "raging-bolt": "Raging Bolt",
+          };
+
+          // Check display name map first
+          if (displayNameMap[name]) {
+            displayName = displayNameMap[name];
+            return;
+          }
+
+          if (name.includes("-alolan")) {
+            let base = name.replace("-alolan", "");
+            let baseDisplay =
+              displayNameMap[base] ||
+              base.charAt(0).toUpperCase() + base.slice(1);
+            displayName = "Alolan " + baseDisplay;
+            return;
+          } else if (name.includes("-galarian")) {
+            let base = name.replace("-galarian", "");
+            let baseDisplay =
+              displayNameMap[base] ||
+              base.charAt(0).toUpperCase() + base.slice(1);
+            displayName = "Galarian " + baseDisplay;
+            return;
+          } else if (name.includes("-hisuian")) {
+            let base = name.replace("-hisuian", "");
+            let baseDisplay =
+              displayNameMap[base] ||
+              base.charAt(0).toUpperCase() + base.slice(1);
+            displayName = "Hisuian " + baseDisplay;
+            return;
+          } else if (name.includes("-paldea")) {
+            let base = name.replace("-paldea", "");
+            let baseDisplay =
+              displayNameMap[base] ||
+              base.charAt(0).toUpperCase() + base.slice(1);
+            displayName = "Paldean " + baseDisplay;
+            return;
+          }
+
+          if (name.includes("gmax")) {
+            name = name.replace("-gmax", "");
+            displayName =
+              "Gigantamax " + name.charAt(0).toUpperCase() + name.slice(1);
+          }
+          if (name.includes("eternamax")) {
+            name = name.replace("-eternamax", "");
+            displayName =
+              "Eternamax " + name.charAt(0).toUpperCase() + name.slice(1);
+          }
+
+          if (name.includes("-megax")) {
+            name = name.replace("-megax", "");
+            displayName =
+              "Mega " + name.charAt(0).toUpperCase() + name.slice(1) + " X";
+          }
+
+          if (name.includes("-megay")) {
+            name = name.replace("-megay", "");
+            displayName =
+              "Mega " + name.charAt(0).toUpperCase() + name.slice(1) + " Y";
+          }
+          if (name.includes("-megaz")) {
+            name = name.replace("-megaz", "");
+            displayName =
+              "Mega " + name.charAt(0).toUpperCase() + name.slice(1) + " Z";
+          }
+          if (name.includes("mega")) {
+            name = name.replace("-mega", "");
+            displayName =
+              "Mega " + name.charAt(0).toUpperCase() + name.slice(1);
+          }
+          if (name.includes("primal")) {
+            name = name.replace("-primal", "");
+            displayName =
+              "Primal " + name.charAt(0).toUpperCase() + name.slice(1);
+          }
+
+          // alert(displayName);
+        }
+
+        //Detects Forms and adds them to an array to be displayed in the modal
+        let forms = [];
+        await detectForms(displayName, speciesData);
+
+        async function detectForms(displayName, speciesData) {
+          forms = [];
+
+          let baseName = displayName;
+          let isMega = false;
+          let isGmax = false;
+
+          if (displayName.startsWith("Mega ")) {
+            isMega = true;
+            baseName = displayName.replace(/^Mega /, "").replace(/ [XYZ]$/, "");
+          } else if (displayName.startsWith("Gigantamax ")) {
+            isGmax = true;
+            baseName = displayName.replace(/^Gigantamax /, "");
+          } else if (displayName.startsWith("Primal ")) {
+            baseName = displayName.replace(/^Primal /, "");
+          }
+
+          // Base form
+          forms.push({
+            type: "Base Form",
+            name: baseName,
+            img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${speciesData.id}.png`,
+          });
+
+          // Check for Mega Evolutions
+          if (formData.Mega) {
+            Object.entries(formData.Mega).forEach(([key, id]) => {
+              if (key.startsWith(`Mega ${baseName}`)) {
+                forms.push({
+                  type: "Mega Evolution",
+                  name: key,
+                  img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
+                });
+              }
+            });
+          }
+
+          if (formData.Primal) {
+            Object.entries(formData.Primal).forEach(([key, id]) => {
+              if (key.startsWith(`Primal ${baseName}`)) {
+                forms.push({
+                  type: "Primal Reversion",
+                  name: key,
+                  img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
+                });
+              }
+            });
+          }
+
+          if (formData.Eternamax) {
+            Object.entries(formData.Eternamax).forEach(([key, id]) => {
+              if (key.startsWith(`Eternamax ${baseName}`)) {
+                forms.push({
+                  type: "Eternamax",
+                  name: key,
+                  img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
+                });
+              }
+            });
+          }
+
+          // Check for Gigantamax
+          if (formData.Gmax) {
+            Object.entries(formData.Gmax).forEach(([key, id]) => {
+              if (key.startsWith(`Gigantamax ${baseName}`)) {
+                forms.push({
+                  type: "Gigantamax",
+                  name: key,
+                  img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${formData.Gmax[key]}.png`,
+                });
+              }
+            });
+          }
+
+          // Check for regional forms
+          for (const variety of speciesData.varieties.slice(1)) {
+            if (
+              variety.pokemon.name.includes("-alolan") ||
+              variety.pokemon.name.includes("-galarian") ||
+              variety.pokemon.name.includes("-hisuian") ||
+              variety.pokemon.name.includes("-paldean")
+            ) {
+              try {
+                const pokeResponse = await fetch(
+                  `https://pokeapi.co/api/v2/pokemon/${variety.pokemon.name}`,
+                );
+                const pokeData = await pokeResponse.json();
+                const img = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokeData.id}.png`;
+                let formName = formatDisplayName(variety.pokemon.name);
+                forms.push({
+                  type: "Regional Form",
+                  name: formName,
+                  img: img,
+                });
+              } catch (error) {
+                console.error("Error fetching variety:", error);
+              }
+            }
+          }
+
+          // Check for misc forms (e.g., regional variants)
+          if (formData.miscForms) {
+            Object.entries(formData.miscForms).forEach(([key, id]) => {
+              if (key.toLowerCase().includes(baseName.toLowerCase())) {
+                forms.push({
+                  type: "Special Form",
+                  name: key,
+                  img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
+                });
+              }
+            });
+          }
+        }
+
+        const categoryObj = speciesData.genera.find(
+          (item) => item.language.name === "en",
+        );
+        const category = categoryObj ? categoryObj.genus : "Unknown";
+
+        // Modal Display
+        const displayText = CSS.escape(
+          cleanFlavorText(
+            speciesData.flavor_text_entries.find(
+              (entry) => entry.language.name === "en",
+            ).flavor_text,
+          ),
+        );
+function getBasePokemonName(name) {
+  const safeNames = [
+    "ho-oh","porygon-z","type-null",
+    "jangmo-o","hakamo-o","kommo-o",
+    "great-tusk","scream-tail","brute-bonnet",
+    "flutter-mane","slither-wing","sandy-shocks",
+    "roaring-moon","iron-valiant","iron-treads",
+    "iron-bundle","iron-hands","iron-jugulis",
+    "iron-moth","iron-thorns","walking-wake",
+    "iron-leaves","iron-boulder","iron-crown",
+    "gouging-fire","raging-bolt"
+  ];
+
+  if (safeNames.includes(name)) return name;
+
+  // remove special form suffixes ONLY
+  return name
+    .replace(/-mega.*$/, "")
+    .replace(/-gmax$/, "")
+    .replace(/-primal$/, "")
+    .replace(/-eternamax$/, "")
+    .replace(/-alola$/, "")
+    .replace(/-galar$/, "")
+    .replace(/-hisui$/, "")
+    .replace(/-paldea$/, "")
+}
+ async function getEvolutionChain(pokemonName) {
+  
+  // Step 1: Get species
+  const speciesRes = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemonName}`);
+  const speciesData = await speciesRes.json();
+
+  // Step 2: Get evolution chain
+  const evoRes = await fetch(speciesData.evolution_chain.url);
+  const evoData = await evoRes.json();
+
+  // Step 3: Parse chain (FIXED)
+  function parseChain(chain) {
+    let result = [];
+
+    function traverse(node) {
+      node.evolves_to.forEach(evo => {
+        result.push({
+          from: node.species.name,
+          to: evo.species.name,
+          details: evo.evolution_details
+        });
+
+        traverse(evo);
       });
+    }
 
-      // Pokémon Image
+    traverse(chain);
+    return result;
+  }
+
+  return parseChain(evoData.chain);
+
+}
+
+let itemID;
+const evolutionChain = await getEvolutionChain(speciesData.name);
+
+document.getElementById("modal").innerHTML = `
+<div class="modal-content">
+  <div class="modal-header">
+    <h1 class="modal-title fs-5" id="exampleModalLabel">
+      #${pokeID} - ${displayName}
+    </h1>
+    <p class="pokemonCategory">${category}</p>
+    <div class="typeContainer">
+      ${data.types
+        .map(
+          (typeInfo) =>
+            `<p class="${typeInfo.type.name}">${typeInfo.type.name}</p>`,
+        )
+        .join("")}
+    </div>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+  </div>
+
+  <div class="modal-body">
+    <div class="dataNameImgContainer">
+      <img 
+        class="dataNameImg" 
+        src="${displayImg}"
+        onerror="this.src='${fallbackImg}'"
+      >
+    </div>
+    
+    ${
+      forms.length > 0
+        ? `
+      <div id="formsSection" class="${forms.length === 1 ? "d-none" : ""} formsSection">
+        <div class="formsContainer">
+          ${forms
+            .map(
+              (form) => `
+            <div style="text-align: center;">
+              <img src="${form.img}" alt="${form.name}" style="width: 65px; height: 65px; object-fit: contain;" onerror="this.style.display='none'" onclick="updateModalInfo('${form.name.replace(/'/g, "\\'")}', '${form.img}')">
+              <p style="font-size: 12px; margin: 5px 0;">${form.name}</p>
+            </div>
+          `,
+            )
+            .join("")}
+        </div>
+      </div>
+    `
+        : ""
+    }
+  </div>
+  <div class="row">
+  <div class="pokedexEntry col-6">
+    <p>${cleanFlavorText(speciesData.flavor_text_entries.find((entry) => entry.language.name === "en").flavor_text)}</p>
+    <button id="EntryRead" onclick="readDexEntry('${displayText}','${displayName}', '${category}')"><img class="img-fluid" src="imgs/Speaker_Icon.png" alt="Read Entry"></button>
+  </div>
+  <div class="col-6">
+  <p class="howToEvolve">
+    How to Evolve:<br>
+${evolutionChain.length === 0
+  ? "Does not evolve"
+  : evolutionChain.map(evo => {
+      let method = "";
+
+      if (evo.details.length > 0) {
+        let conditions = [];
+
+        for (let d of evo.details) {
+
+          if (d.min_level){
+            conditions.push(`Level ${d.min_level}`); //Rare Candy (50) Symbol
+            itemID = 50
+          } 
+          if (d.gender == 1) conditions.push(`Female Only`); //♀
+          if (d.gender == 2) conditions.push(`Male Only`); //♂
+          if (d.item) {
+            conditions.push(`Use ${d.item.name}`); //Sun (80), Moon (81), Fire (82), Thunder (83), Water (84), Leaf (85), Shiny (107), Dusk (108), Dawn (109), Oval (110), Ice (885)
+            if (d.item.name === "sun-stone") itemID = 80;
+            else if (d.item.name === "moon-stone") itemID = 81;
+            else if (d.item.name === "fire-stone") itemID = 82;
+            else if (d.item.name === "thunder-stone") itemID = 83;
+            else if (d.item.name === "water-stone") itemID = 84;
+            else if (d.item.name === "leaf-stone") itemID = 85;
+            else if (d.item.name === "shiny-stone") itemID = 107;
+            else if (d.item.name === "dusk-stone") itemID = 108;
+            else if (d.item.name === "dawn-stone") itemID = 109;
+            else if (d.item.name === "oval-stone") itemID = 110;
+            else if (d.item.name === "ice-stone") itemID = 885;
+          }
+          if (d.min_happiness){ 
+            conditions.push(`High friendship`);
+          itemID = 195 //Soothe Bell (195)
+          }
+          if (d.min_beauty) {
+            conditions.push(`High beauty`);
+          itemID = 580 //Prism Scale (580)
+          } 
+          // if (d.min_affection) conditions.push(`High affection`);
+          if (d.min_damage_taken) conditions.push(`Take ${d.min_damage_taken} damage`);
+          if (d.min_move_count) conditions.push(`Know at least ${d.min_move_count} moves`);
+          if (d.min_steps) {
+            conditions.push(`Walk ${d.min_steps} steps`);
+            itemID = 742 //Roller Skates (742)
+          }
+          if (d.needs_multiplayer) conditions.push(`Multiplayer`);
+          if (d.needs_overworld_rain) conditions.push(`Requires Rain`);
+          if (d.party_species) conditions.push(`Have ${d.party_species.name} in party`);
+          if (d.party_type) conditions.push(`Have a ${d.party_type.name}-type Pokémon in party`);
+          if (d.region) conditions.push(`In ${d.region.name}`);
+          if (d.relative_physical_stats) conditions.push(`Relative Physical Stats: ${d.relative_physical_stats}`);
+          if (d.held_item){ conditions.push(`Hold ${d.held_item.name}`);
+        if (d.held_item.name === "kings-rock") itemID = 198;
+        else if (d.held_item.name === "deep-sea-tooth") itemID = 203;
+        else if (d.held_item.name === "deep-sea-scale") itemID = 204;
+        else if (d.held_item.name === "metal-coat") itemID = 210;
+        else if (d.held_item.name === "dragon-scale") itemID = 212;
+        else if (d.held_item.name === "upgrade") itemID = 229;
+        else if (d.held_item.name === "protector") itemID = 298;
+        else if (d.held_item.name === "electirizer") itemID = 299;
+        else if (d.held_item.name === "magmarizer") itemID = 300;
+        else if (d.held_item.name === "dubious-disc") itemID = 301;
+        else if (d.held_item.name === "reaper-cloth") itemID = 302;
+        else if (d.held_item.name === "razor-claw") itemID = 303;
+        else if (d.held_item.name === "razor-fang") itemID = 304;
+        else if (d.held_item.name === "whipped-dream") itemID = 686;
+        else if (d.held_item.name === "sachet") itemID = 687;
+        } //Kings Rock (198), Deep Sea Tooth (203), Deep Sea Scale (204), Metal Coat (210), Dragon Scale (212), Upgrade (229), Protector (298), Electirizer (299), Magmarizer (300), Dubious Disc (301), Reaper Cloth (302), Razor Claw (303), Razor Fang (304), Whipped Dream (686), Sachet (687),
+          if (d.known_move) conditions.push(`Learn ${d.known_move.name}`);
+          if (d.known_move_type) conditions.push(`Know a ${d.known_move_type.name}-type move`);
+          if (d.location) conditions.push(`At ${d.location.name}`);
+          if (d.time_of_day && d.time_of_day !== "") conditions.push(d.time_of_day);
+          if (d.trade_species) {
+             conditions.push(`Trade for ${d.trade_species.name}`);
+          }
+          if (d.turn_upside_down) conditions.push(`Turn console upside down`);
+          if (d.used_move) conditions.push(`Use ${d.used_move.name}`);
+          if (d.trigger && d.trigger.name === "trade") { 
+            conditions.push(`Trade`)
+            itemID = 484;
+          };
+          if (d.trigger && d.trigger.name == "three-critical-hits") {
+            conditions.push(`Land 3 critical hits in one battle`); 
+            itemID = 236; //Stick (236)
+          }
+          if (d.trigger && d.trigger.name === "shed") {
+             conditions.push(`Evolve with empty slot in party`);
+            }
+//Poke Radar (408), Town Map (419), Coin Case (421), GBA Link Cords? (484), Splicer (671), Shiny Charm (675), Reveal Glass (681), N-Solarizer/N-Lunarizer (989, 990)
+// Mega Stones (695 - 722, 760 - 761, 793 - 805, 808 - 811)
+// Key Stone (814)
+// Prison Bottle (806)
+// Zygarde Cube (884)
+
+}
+        const mySet = new Set(conditions);
+        conditions = Array.from(mySet);
+        method = conditions.join(", ");
+
+      }
+      let pre_evo = evo.from.charAt(0).toUpperCase() + evo.from.slice(1);
+      let post_evo = evo.to.charAt(0).toUpperCase() + evo.to.slice(1);  
+
+      return `${pre_evo} → ${post_evo} (${method})`;
+    }).join("<br>")
+}
+  </p>
+  </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn-modalclose" data-bs-dismiss="modal">
+      Close
+    </button>
+  </div>
+</div>`;
+        // Add click event listener for the image to play cry
+        const imgElement = document.querySelector(".dataNameImg");
+        if (imgElement) {
+          imgElement.addEventListener("click", () => currentCry.play());
+        }
+        const modal = new bootstrap.Modal(
+          document.getElementById("exampleModal"),
+        );
+        modal.show();
+      });
+      // Pokémon Image & Try again if its an error
+
       let img = document.createElement("img");
-
-      if (shinyToggle && highClassFilter) img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${pokeID}.png`;
-      else if (highClassFilter) img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokeID}.png`;
-      else if (shinyToggle) img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${pokeID}.png`;
-      else img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokeID}.png`;
-
       img.onerror = function () {
-  this.onerror = null;
-  this.src = "imgs/TransparentPokeball.png";
-  };
+        if (!this.dataset.retry) {
+          this.dataset.retry = "1";
+          this.src = this.src + "?retry=" + Date.now();
+        } else {
+          this.src = "imgs/TransparentPokeball.png";
+        }
+      };
+
+      if (shinyToggle && highClassFilter)
+        img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${pokeID}.png`;
+      else if (highClassFilter)
+        img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokeID}.png`;
+      else if (shinyToggle)
+        img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${pokeID}.png`;
+      else
+        img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokeID}.png`;
+
+      setTimeout(() => {
+        img.src = url;
+      }, createdCount * 5);
+
+      img.setAttribute("onerror", "this.src='imgs/TransparentPokeball.png'");
 
       img.style.width = "100%";
       img.style.height = "100%";
@@ -303,6 +920,75 @@ function mapGrid(height, width, startNumber, totalCount) {
   }
 }
 
+function sanitizeSpeechText(text) {
+  return String(text)
+    .replace(/\f/g, " ")
+    .replace(/\n/g, " ")
+    .replace(/\r/g, " ")
+    .replace(/[♀♂]/g, "")
+    .replace(/["'"]/g, "")
+    .replace(/[^a-zA-Z0-9.,!?()\- ]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+let lastDexEntry = "";
+let lastDexTime = 0;
+const dexCooldown = 3000; // 3 seconds
+
+function readDexEntry(entry, name, category) {
+  if (!entry) return;
+
+  let reEntry = `${name}, the ${category}. ${entry}`;
+
+  const now = Date.now();
+  const cleanEntry = sanitizeSpeechText(reEntry);
+  console.log(cleanEntry);
+  // Prevent spam clicking same entry
+  if (cleanEntry === lastDexEntry && now - lastDexTime < dexCooldown) {
+    return;
+  }
+
+  lastDexEntry = cleanEntry;
+  lastDexTime = now;
+
+  // Stop current speech immediately
+  window.speechSynthesis.cancel();
+
+  function speakNow() {
+    const voices = window.speechSynthesis.getVoices();
+
+    const dexVoice =
+      voices.find(
+        (v) =>
+          v.name.toLowerCase().includes("david") ||
+          v.name.toLowerCase().includes("alex") ||
+          v.name.toLowerCase().includes("male"),
+      ) || voices[0];
+
+    const utter = new SpeechSynthesisUtterance(cleanEntry);
+
+    if (dexVoice) {
+      utter.voice = dexVoice;
+    }
+
+    utter.pitch = 0.585;
+    utter.rate = 1.2;
+    utter.volume = 1;
+
+    window.speechSynthesis.speak(utter);
+  }
+
+  // FIX: voices often aren't loaded instantly on first click
+  if (window.speechSynthesis.getVoices().length === 0) {
+    window.speechSynthesis.onvoiceschanged = () => {
+      speakNow();
+      window.speechSynthesis.onvoiceschanged = null;
+    };
+  } else {
+    speakNow();
+  }
+}
 
 // Filters the grid to show only Pokémon in the region
 function filterRegionTiles(start, end) {
@@ -314,7 +1000,6 @@ function filterRegionTiles(start, end) {
     else tile.style.display = "block";
   });
 }
-
 
 // Special Evolution Viewer
 function SpecialEvo(evoType) {
@@ -330,6 +1015,140 @@ function SpecialEvo(evoType) {
     currentRegionStart = null;
     currentRegionCount = null;
     calcCells(gigantamaxList.length, 0);
+  }
+}
+
+async function updateModalInfo(formName, formImg) {
+  // Extract the Pokemon ID from the image URL
+  const idMatch = formImg.match(/\/official-artwork\/(\d+)\.png$/);
+  if (!idMatch) return;
+  const pokeID = parseInt(idMatch[1]);
+
+  try {
+    const response = await fetch(
+      `https://pokeapi.co/api/v2/pokemon/${pokeID}/`,
+    );
+    const data = await response.json();
+
+    // Try to use the form's cry first, fallback to base form cry if missing
+    let cryUrl = data.cries?.latest;
+
+    // If no cry exists for the form, fetch the base species default cry
+    if (!cryUrl) {
+      try {
+        const baseResponse = await fetch(
+          `https://pokeapi.co/api/v2/pokemon/${speciesData.id}/`,
+        );
+        const baseData = await baseResponse.json();
+        cryUrl = baseData.cries?.latest;
+      } catch (error) {
+        console.error("Error loading fallback cry:", error);
+      }
+    }
+
+    // Final fallback safety
+    if (cryUrl) {
+      currentCry = new Audio(cryUrl);
+    }
+
+    // IMPORTANT FIX:
+    // Use the real API form name for animated sprites instead of trimming
+    // it back to the base form. This prevents Mega / Regional / Gmax forms
+    // from reverting to the base sprite.
+    let spriteName = data.name;
+
+    // Special Pokemon Showdown naming fixes only
+    if (spriteName.includes("-mega-y")) {
+      spriteName = spriteName.replace("-mega-y", "-megay");
+    }
+    if (spriteName.includes("-mega-x")) {
+      spriteName = spriteName.replace("-mega-x", "-megax");
+    }
+    if (spriteName.includes("-mega-z")) {
+      spriteName = spriteName.replace("-mega-z", "-megaz");
+    }
+
+    // Determine the display image (animated 3D model)
+    let displayImg;
+    let fallbackImg = formImg;
+
+    if (shinyToggle) {
+      displayImg = `https://play.pokemonshowdown.com/sprites/ani-shiny/${spriteName}.gif`;
+
+      if (!fallbackImg.includes("shiny")) {
+        fallbackImg = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${pokeID}.png`;
+      }
+    } else {
+      displayImg = `https://play.pokemonshowdown.com/sprites/ani/${spriteName}.gif`;
+    }
+
+    // Update the image
+    const imgElement = document.querySelector(".dataNameImg");
+
+    if (imgElement) {
+      // Clear old image first
+      imgElement.src = "";
+      imgElement.onload = null;
+      imgElement.onerror = null;
+
+      setTimeout(() => {
+        imgElement.src = displayImg + "?t=" + Date.now();
+
+        // First fallback: official artwork
+        imgElement.onerror = function () {
+          this.onerror = function () {
+            // Final fallback: blank Pokéball
+            this.src = "imgs/TransparentPokeball.png";
+          };
+
+          this.src = fallbackImg;
+        };
+      }, 50);
+
+      // Keep cry replay on image click
+      imgElement.onclick = () => currentCry.play();
+    }
+
+    // Fetch species data
+    const speciesResponse = await fetch(data.species.url);
+    const speciesData = await speciesResponse.json();
+
+    // Update the Pokedex entry
+    const entryElement = document.querySelector(".pokedexEntry p");
+    if (entryElement) {
+      const englishEntry = speciesData.flavor_text_entries.find(
+        (entry) => entry.language.name === "en",
+      );
+
+      if (englishEntry) {
+        entryElement.textContent = cleanFlavorText(englishEntry.flavor_text);
+      }
+    }
+
+    // Update the display name
+    const nameElement = document.querySelector(".modal-title");
+    if (nameElement) {
+      nameElement.textContent = formName;
+    }
+
+    // Update types
+    const typeContainer = document.querySelector(".typeContainer");
+    if (typeContainer) {
+      typeContainer.innerHTML = data.types
+        .map(
+          (typeInfo) =>
+            `<p class="${typeInfo.type.name}">${typeInfo.type.name}</p>`,
+        )
+        .join("");
+    }
+
+    if (shinyToggle && highClassFilter) {
+      setTimeout(() => newShine.play(), 1500);
+    } else if (shinyToggle) {
+      setTimeout(() => shine.play(), 1500);
+    }
+  } catch (error) {
+    console.error("Error updating modal info:", error);
   }
 }
 

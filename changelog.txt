@@ -1,14 +1,23 @@
 Unreleased Versions
 ___________________________________________________________________________________________________________
-- Where to find every pokemon
-- Evolutions and Requirements for Evolution
-- More info on each pokemon
-- Added talking Pokedex
-- Added Moving Sprites (Delayed Indefinitely)
-- Track Whos been caught and from where (Delayed Indefinitely)
+- Where to find every pokemon (Dex Nav Equivalent)
+- Add icons for Evolution (Delayed)
+
 
 Official Release
 ___________________________________________________________________________________________________________
+v1.5 2026
+- Fixed several naming issues in altForms.json involving Cramorant & Pikachu
+- Changed Scroll Bar & Colors
+- Fixed Bug where Cries don't play
+- Added 3d renderings when clicked
+- Added Alternate Forms
+- Added More info on each pokemon
+- Fixed a bug where cries can overlap
+- Added talking Pokedex
+- Centered the Home Pokedex Screen
+- Added Evolutions and Requirements for Evolution
+
 V1.4 2026-04-13
 - Fixed Bug where some pokemon cries don't play
 - Added updates on Unreleased Versions in changelog

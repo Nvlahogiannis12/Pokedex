@@ -666,6 +666,7 @@ function getBasePokemonName(name) {
     .replace(/-paldea$/, "")
 }
  async function getEvolutionChain(pokemonName) {
+  
   // Step 1: Get species
   const speciesRes = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemonName}`);
   const speciesData = await speciesRes.json();
@@ -695,8 +696,10 @@ function getBasePokemonName(name) {
   }
 
   return parseChain(evoData.chain);
+
 }
 
+let itemID;
 const evolutionChain = await getEvolutionChain(speciesData.name);
 
 document.getElementById("modal").innerHTML = `
@@ -765,32 +768,81 @@ ${evolutionChain.length === 0
 
         for (let d of evo.details) {
 
-          if (d.min_level) conditions.push(`Level ${d.min_level}`); //Rare Candy (50) Symbol
+          if (d.min_level){
+            conditions.push(`Level ${d.min_level}`); //Rare Candy (50) Symbol
+            itemID = 50
+          } 
           if (d.gender == 1) conditions.push(`Female Only`); //♀
           if (d.gender == 2) conditions.push(`Male Only`); //♂
-          if (d.item) conditions.push(`Use ${d.item.name}`); //Sun (80), Moon (81), Fire (82), Thunder (83), Water (84), Leaf (85), Shiny (107), Dusk (108), Dawn (109), Oval (110), Ice (885)
-          if (d.min_happiness) conditions.push(`High friendship`); //Soothe Bell (195)
-          if (d.min_beauty) conditions.push(`High beauty`); //Prism Scale (580)
+          if (d.item) {
+            conditions.push(`Use ${d.item.name}`); //Sun (80), Moon (81), Fire (82), Thunder (83), Water (84), Leaf (85), Shiny (107), Dusk (108), Dawn (109), Oval (110), Ice (885)
+            if (d.item.name === "sun-stone") itemID = 80;
+            else if (d.item.name === "moon-stone") itemID = 81;
+            else if (d.item.name === "fire-stone") itemID = 82;
+            else if (d.item.name === "thunder-stone") itemID = 83;
+            else if (d.item.name === "water-stone") itemID = 84;
+            else if (d.item.name === "leaf-stone") itemID = 85;
+            else if (d.item.name === "shiny-stone") itemID = 107;
+            else if (d.item.name === "dusk-stone") itemID = 108;
+            else if (d.item.name === "dawn-stone") itemID = 109;
+            else if (d.item.name === "oval-stone") itemID = 110;
+            else if (d.item.name === "ice-stone") itemID = 885;
+          }
+          if (d.min_happiness){ 
+            conditions.push(`High friendship`);
+          itemID = 195 //Soothe Bell (195)
+          }
+          if (d.min_beauty) {
+            conditions.push(`High beauty`);
+          itemID = 580 //Prism Scale (580)
+          } 
           // if (d.min_affection) conditions.push(`High affection`);
           if (d.min_damage_taken) conditions.push(`Take ${d.min_damage_taken} damage`);
           if (d.min_move_count) conditions.push(`Know at least ${d.min_move_count} moves`);
-          if (d.min_steps) conditions.push(`Walk ${d.min_steps} steps`); //Roller Skates (742)
+          if (d.min_steps) {
+            conditions.push(`Walk ${d.min_steps} steps`);
+            itemID = 742 //Roller Skates (742)
+          }
           if (d.needs_multiplayer) conditions.push(`Multiplayer`);
           if (d.needs_overworld_rain) conditions.push(`Requires Rain`);
           if (d.party_species) conditions.push(`Have ${d.party_species.name} in party`);
           if (d.party_type) conditions.push(`Have a ${d.party_type.name}-type Pokémon in party`);
           if (d.region) conditions.push(`In ${d.region.name}`);
           if (d.relative_physical_stats) conditions.push(`Relative Physical Stats: ${d.relative_physical_stats}`);
-          if (d.held_item) conditions.push(`Hold ${d.held_item.name}`); //Kings Rock (198), Deep Sea Tooth (203), Deep Sea Scale (204), Metal Coat (210), Dragon Scale (212), Upgrade (229), Protector (298), Electirizer (299), Magmarizer (300), Dubious Disc (301), Reaper Cloth (302), Razor Claw (303), Razor Fang (304), Whipped Dream (686), Sachet (687),
+          if (d.held_item){ conditions.push(`Hold ${d.held_item.name}`);
+        if (d.held_item.name === "kings-rock") itemID = 198;
+        else if (d.held_item.name === "deep-sea-tooth") itemID = 203;
+        else if (d.held_item.name === "deep-sea-scale") itemID = 204;
+        else if (d.held_item.name === "metal-coat") itemID = 210;
+        else if (d.held_item.name === "dragon-scale") itemID = 212;
+        else if (d.held_item.name === "upgrade") itemID = 229;
+        else if (d.held_item.name === "protector") itemID = 298;
+        else if (d.held_item.name === "electirizer") itemID = 299;
+        else if (d.held_item.name === "magmarizer") itemID = 300;
+        else if (d.held_item.name === "dubious-disc") itemID = 301;
+        else if (d.held_item.name === "reaper-cloth") itemID = 302;
+        else if (d.held_item.name === "razor-claw") itemID = 303;
+        else if (d.held_item.name === "razor-fang") itemID = 304;
+        else if (d.held_item.name === "whipped-dream") itemID = 686;
+        else if (d.held_item.name === "sachet") itemID = 687;
+        } //Kings Rock (198), Deep Sea Tooth (203), Deep Sea Scale (204), Metal Coat (210), Dragon Scale (212), Upgrade (229), Protector (298), Electirizer (299), Magmarizer (300), Dubious Disc (301), Reaper Cloth (302), Razor Claw (303), Razor Fang (304), Whipped Dream (686), Sachet (687),
           if (d.known_move) conditions.push(`Learn ${d.known_move.name}`);
           if (d.known_move_type) conditions.push(`Know a ${d.known_move_type.name}-type move`);
           if (d.location) conditions.push(`At ${d.location.name}`);
           if (d.time_of_day && d.time_of_day !== "") conditions.push(d.time_of_day);
-          if (d.trade_species) conditions.push(`Trade for ${d.trade_species.name}`);
+          if (d.trade_species) {
+             conditions.push(`Trade for ${d.trade_species.name}`);
+          }
           if (d.turn_upside_down) conditions.push(`Turn console upside down`);
           if (d.used_move) conditions.push(`Use ${d.used_move.name}`);
-          if (d.trigger && d.trigger.name === "trade") conditions.push(`Trade`);
-          if (d.trigger && d.trigger.name == "three-critical-hits") conditions.push(`Land 3 critical hits in one battle`); //Stick (236)
+          if (d.trigger && d.trigger.name === "trade") { 
+            conditions.push(`Trade`)
+            itemID = 484;
+          };
+          if (d.trigger && d.trigger.name == "three-critical-hits") {
+            conditions.push(`Land 3 critical hits in one battle`); 
+            itemID = 236; //Stick (236)
+          }
           if (d.trigger && d.trigger.name === "shed") {
              conditions.push(`Evolve with empty slot in party`);
             }
